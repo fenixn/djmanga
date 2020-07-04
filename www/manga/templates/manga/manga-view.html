@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ manga.name }} - Djmanga Reader
+{% endblock %}
+
+{% block content %}
+  <div class='manga'>
+    <h1>{{ manga.name }}</h1>
+    <h2>Chapters</h2>
+    <ul class='manga__list'>
+      {% for chapter in manga.get_chapters %}
+        <li>
+          <a href="">
+            <img src='{{ BASE_URL }}/{{ chapter.get_chapter_cover }}' alt='{{ chapter.name }}' />
+            <span>Chapter {{ chapter.chapter }}</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

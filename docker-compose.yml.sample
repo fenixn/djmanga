@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=
+      - POSTGRES_USER=
+      - POSTGRES_PASSWORD=
+    volumes:
+      - djmangadb:/var/lib/postgresql/data
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 81:8080
+  web:
+    build: 
+        context: './docker/python/'
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./www:/www/
+      - ./docker/shell/.bashrc:/root/.bashrc
+    ports:
+      - 80:8000
+volumes:
+  djmangadb:
+    external: true

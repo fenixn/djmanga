@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Djmanga Reader - Manga{% endblock %}
+
+{% block content %}
+  <div class='manga'>
+    <h1>Djmanga Reader</h1>
+    {% if manga_list %}
+      <ul class='manga__list'>
+      {% for manga in manga_list %}
+        <li>
+          <a href="{% url 'manga:manga-view' manga.url_key %}">
+            <img src="{{ BASE_URL }}/{{ manga.cover_path }}" alt="{{ manga.name }}" />
+            <span>{{ manga.name }}</span>
+          </a>
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>No Manga is available</p>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+<!Doctype html>
+<html lang="en">
+    <head>
+        <meta name="Author" content="Phuong Nguyen">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>{% block title %}Djmanga Reader{% endblock %}</title>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'global/style.css' %}">
+        {% block stylesheets %}{% endblock %}
+        {% block headscripts %}{% endblock %}
+    </head>
+    <body>
+        {% block sidebar %}
+        <nav>
+            <a href="{{ BASE_URL }}/admin">Admin</a>
+            <a href="{{ BASE_URL }}/">Home</a>
+            <a href="{{ BASE_URL }}/manga">Manga</a>
+            <a href="{{ BASE_URL }}/manga/scan/">Scan For Manga</a>
+        </nav>
+        {% endblock %}
+        {% block content %}{% endblock %}
+    </body>
+    <footer>
+        {% block footer %}{% endblock %}
+    </footer>
+</html>

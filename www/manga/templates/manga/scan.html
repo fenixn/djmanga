@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Djmanga Reader - Scan Manga</h1>
+  <p>Scan manga folder for new manga</p> 
+  
+  <p>
+    Manga: 
+    {% for manga in manga_list %}
+      {{ manga }}
+    {% endfor %}
+  </p>
+{% endblock %}
