@@ -32,3 +32,22 @@ class Chapter(models.Model): # A single chapter of a manga
         Returns the media path of the first page of the chapter.
         """
         return self.page_set.filter(chapter=self, page=1).get().file_media_path
+
+    def get_manga_by_slug(slug):
+        """
+        Returns the Manga object from a slug input.
+        Returns False if no match is found
+        """
+        manga_filter = Manga.objects.filter(
+            url_key = slug
+        )
+        if manga_filter.exists():
+            return manga_filter.get()
+        else:
+            return False
+
+    def get_pages(self):
+        """
+        Return all Page entries related to the chapter.
+        """
+        return self.page_set.all().order_by('page')

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ manga.name }} - Chapter
+{% endblock %}
+
+{% block content %}
+  <div class='manga'>
+    <h1>{{ manga.name }}</h1>
+    <h2>Chapter {{ chapter.chapter }}</h2>
+    <ul class='manga__page-list'>
+      {% for page in chapter.get_pages %}
+        <li>
+            <img src='{{ BASE_URL }}/{{ page.file_media_path }}' alt='Page {{ page.page }}' />
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

@@ -1,8 +1,14 @@
-.manga__list {
+.manga__list,
+.manga__page-list {
     display: flex;
     flex-wrap: wrap;
     padding: 0;
     list-style-type: none;
+}
+.manga__page-list {
+    flex-direction: row-reverse;
+    justify-content: center;
+    align-items: center;
 }
 .manga__list a {
     text-decoration: none;
@@ -11,6 +17,18 @@
     width: 23%;
     padding: 1%;
 }
-.manga__list img {
+.manga__list img,
+.manga__page-list img {
     width: 100%;
+}
+.manga__page-list li {
+    max-width: 48%;
+    height: 90vh;
+    max-height: 90vh;
+    padding: 1%;
+}
+.manga__page-list img {
+    padding: 1%;
+    height: 100%;
+    max-width: 100%;
 }
