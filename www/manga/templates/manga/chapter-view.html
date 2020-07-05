@@ -8,7 +8,7 @@
   <div class='manga'>
     <a href="{{ BASE_URL }}/manga/{{manga.url_key}}"><h1>{{ manga.name }}</h1></a>
     <h2>Chapter {{ chapter.chapter }}</h2>
-    <ul class='manga__page-list'>
+    <ul class='manga__page-list {% if chapter.read_left %}manga__read-left{% else %} manga__read-right {% endif %}'>
       {% for page in chapter.get_pages %}
         <li>
             <img src='{{ BASE_URL }}/{{ page.file_media_path }}' alt='Page {{ page.page }}' />

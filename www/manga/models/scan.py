@@ -2,6 +2,7 @@ import datetime
 import os
 import logging
 import re
+import json
 
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.staticfiles.utils import get_files
@@ -139,7 +140,7 @@ class Scan(models.Model):
                     existing_manga.chapters = chapter_count - 1
                     existing_manga.save()
             else:
-                # No entry is found, create one
+                # No entry is found, create one.
                 # url_key regex replaces all but alphanumeric with a space
                 new_manga = Manga.objects.create(
                     name = manga,
@@ -148,6 +149,15 @@ class Scan(models.Model):
                     dir_abs_path = self.manga_dir_url + '/' + manga,
                     dir_media_path = self.manga_media_url + '/' + manga
                 )
+                # Check folder for info.json to update values for entry
+                info_abs_path = self.manga_dir_url + '/' + manga + '/info.json'
+                if os.path.isfile(info_abs_path):
+                    info_file = open(info_abs_path, 'r')
+                    info_json = json.load(info_file)
+                    for attribute in info_json:
+                        setattr(new_manga, attribute, info_json[attribute])
+                    new_manga.save()
+                
                 scan_chapter_list = self.get_scan_chapter_list(new_manga)
                 if scan_chapter_list == False:
                     # No Chapter subdir found, create one chapter and set

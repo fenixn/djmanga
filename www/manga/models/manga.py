@@ -15,7 +15,8 @@ from django.utils.timezone import now
 class Manga(models.Model): # A manga series
     name = models.CharField(max_length=1000)
     url_key = models.CharField(max_length=1000)
-    author = models.CharField(max_length=200)
+    author = models.CharField(max_length=200, blank=True)
+    illustrator = models.CharField(max_length=200, blank=True)
     chapters = models.IntegerField(default=1)
     dir_name = models.CharField(max_length=1000)
     dir_abs_path = models.CharField(max_length=1200)

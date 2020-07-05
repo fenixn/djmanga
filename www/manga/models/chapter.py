@@ -17,6 +17,7 @@ class Chapter(models.Model): # A single chapter of a manga
     manga = models.ForeignKey(Manga, on_delete=models.CASCADE)
     name = models.CharField(max_length=1000)
     chapter = models.IntegerField(default=1)
+    read_left = models.BooleanField(verbose_name='read right to left?', default=True)
     dir_name = models.CharField(max_length=1000)
     dir_abs_path = models.CharField(max_length=2200)
     dir_media_path = models.CharField(max_length=2000)
