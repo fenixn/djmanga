@@ -2,6 +2,7 @@ import datetime
 import os
 import logging
 import re
+import json
 
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.staticfiles.utils import get_files
@@ -56,7 +57,7 @@ class Scan(models.Model):
         scan_page_list = []
         chapter_dir_files = os.scandir(Chapter.dir_abs_path)
         for entry in chapter_dir_files:
-            if entry.is_file():
+            if entry.is_file() and entry.name != 'info.json':
                 scan_page_list.append(entry.name)
         if len(scan_page_list) > 0:
             page_count = 1
@@ -83,14 +84,6 @@ class Scan(models.Model):
                         file_media_path = Chapter.dir_media_path + '/' + page
                     )
                 page_count += 1
-        # Update Cover
-        manga = Chapter.manga
-        first_page_filter = Page.objects.filter(
-            chapter = Chapter,
-            page = 1
-        )
-        manga.cover_path = first_page_filter.get().file_media_path
-        manga.save()
 
     def scan_manga(self):
         """
@@ -134,12 +127,18 @@ class Scan(models.Model):
                                 dir_abs_path = existing_manga.dir_abs_path + '/' + chapter,
                                 dir_media_path = existing_manga.dir_media_path + '/' + chapter
                             )
+                            # Check folder for info.json to update values for chapter
+                            info_abs_path = new_chapter.dir_media_path + '/info.json'
+                            self.update_model_from_info(new_chapter, info_abs_path)
                             self.update_chapter_pages(new_chapter)                     
                         chapter_count += 1
                     existing_manga.chapters = chapter_count - 1
                     existing_manga.save()
+                info_abs_path = self.manga_dir_url + '/' + manga + '/info.json'
+                self.update_model_from_info(existing_manga, info_abs_path)
+                self.update_manga_cover_path(existing_manga)
             else:
-                # No entry is found, create one
+                # No entry is found, create one.
                 # url_key regex replaces all but alphanumeric with a space
                 new_manga = Manga.objects.create(
                     name = manga,
@@ -148,6 +147,9 @@ class Scan(models.Model):
                     dir_abs_path = self.manga_dir_url + '/' + manga,
                     dir_media_path = self.manga_media_url + '/' + manga
                 )
+                # Check folder for info.json to update values for manga
+                info_abs_path = self.manga_dir_url + '/' + manga + '/info.json'
+                self.update_model_from_info(new_manga, info_abs_path)
                 scan_chapter_list = self.get_scan_chapter_list(new_manga)
                 if scan_chapter_list == False:
                     # No Chapter subdir found, create one chapter and set
@@ -159,6 +161,9 @@ class Scan(models.Model):
                         dir_abs_path = new_manga.dir_abs_path,
                         dir_media_path = new_manga.dir_media_path
                     )
+                    # Check folder for info.json to update values for chapter
+                    info_abs_path = new_chapter.dir_media_path + '/info.json'
+                    self.update_model_from_info(new_chapter, info_abs_path)
                     self.update_chapter_pages(new_chapter)
                 else:
                     # Chapter subdirs found, create a chapter for each
@@ -171,6 +176,40 @@ class Scan(models.Model):
                             dir_abs_path = new_manga.dir_abs_path + '/' + chapter,
                             dir_media_path = new_manga.dir_media_path + '/' + chapter
                         )
+                        # Check folder for info.json to update values for chapter
+                        info_abs_path = new_chapter.dir_media_path + '/info.json'
+                        self.update_model_from_info(new_chapter, info_abs_path)
                         self.update_chapter_pages(new_chapter)
                         chapter_count += 1
+                # Update Cover For New Manga
+                self.update_manga_cover_path(new_manga)
         return scan_manga_list
+
+    def update_model_from_info(self, model, info_abs_path):
+        """
+        Update a model from the info.json file inside it's directory.
+        """
+        if os.path.isfile(info_abs_path):
+            info_file = open(info_abs_path, 'r')
+            info_json = json.load(info_file)
+            for attribute in info_json:
+                setattr(model, attribute, info_json[attribute])
+            model.save()
+        return
+
+    def update_manga_cover_path(self, manga):
+        """
+        Update the cover path for the input manga.
+        """
+        cover_chapter = Chapter.objects.filter(
+            manga = manga,
+            chapter = manga.cover_chapter
+        )
+        if cover_chapter.exists():
+            cover_page = Page.objects.filter(
+                chapter = cover_chapter.get(),
+                page = manga.cover_page
+            )
+            if cover_page.exists():
+                manga.cover_path = cover_page.get().file_media_path
+                manga.save()

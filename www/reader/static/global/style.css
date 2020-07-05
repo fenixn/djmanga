@@ -1,14 +1,76 @@
+body {
+    background-color: #222222;
+    color: #efefef;
+    margin: 0;
+    padding: 4em 0 0 0;
+    font-size: 14px;
+    font-family: 'Gill Sans', 'Arial', sans-serif;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #bbe1fa;
+    text-align: center;
+}
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+a {
+    color: #bbe1fa;
+    text-decoration: none;
+}
+a:hover {
+    color: #eee;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    background-color: #0f4c75;
+    padding: 0.1em;
+    width: 100%;
+}
+nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+nav li {
+    padding: 0 1em;
+    border-right: 1px solid #222222;
+}
+nav li.last {
+    border-right: 0;
+}
+nav a {
+    font-size: 1.25em;
+    text-decoration: none;
+}
+
+.manga__nav {
+    display: flex;
+    justify-content: center;
+    flex-direction: row-reverse;
+    font-size: 1.5em;
+}
+.manga__nav li {
+    padding: 0 0.25em;
+}
 .manga__list,
 .manga__page-list {
     display: flex;
     flex-wrap: wrap;
     padding: 0;
-    list-style-type: none;
 }
 .manga__page-list {
     flex-direction: row-reverse;
     justify-content: center;
     align-items: center;
+}
+.manga__nav.read-right,
+.manga__read-right {
+    flex-direction: row;
 }
 .manga__list a {
     text-decoration: none;
@@ -22,7 +84,7 @@
     width: 100%;
 }
 .manga__page-list li {
-    max-width: 48%;
+    max-width: 100%;
     height: 90vh;
     max-height: 90vh;
     padding: 1%;

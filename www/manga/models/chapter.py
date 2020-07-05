@@ -10,6 +10,7 @@ from django.db import models
 
 from django.utils import timezone
 from django.utils.timezone import now
+from django.urls import resolve
 
 from .manga import Manga
 
@@ -17,6 +18,7 @@ class Chapter(models.Model): # A single chapter of a manga
     manga = models.ForeignKey(Manga, on_delete=models.CASCADE)
     name = models.CharField(max_length=1000)
     chapter = models.IntegerField(default=1)
+    read_left = models.BooleanField(verbose_name='read right to left?', default=True)
     dir_name = models.CharField(max_length=1000)
     dir_abs_path = models.CharField(max_length=2200)
     dir_media_path = models.CharField(max_length=2000)
@@ -51,3 +53,31 @@ class Chapter(models.Model): # A single chapter of a manga
         Return all Page entries related to the chapter.
         """
         return self.page_set.all().order_by('page')
+
+    def get_next(self):
+        """
+        Returns the path for the next chapter.
+        Returns False if there is no next chapter.
+        """
+        next_chapter = Chapter.objects.filter(
+            manga = self.manga,
+            chapter = self.chapter + 1
+        )
+        if next_chapter.exists():
+            return '/manga/' + self.manga.url_key + '/' + str(self.chapter + 1)
+        else:
+            return False
+
+    def get_prev(self):
+        """
+        Returns the path for the previous chapter.
+        Returns False if there is no previous chapter.
+        """
+        prev_chapter = Chapter.objects.filter(
+            manga = self.manga,
+            chapter = self.chapter - 1
+        )
+        if prev_chapter.exists():
+            return '/manga/' + self.manga.url_key + '/' + str(self.chapter - 1)
+        else:
+            return False

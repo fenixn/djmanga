@@ -1,0 +1,22 @@
+{% if manga.is_single_chapter is False %}
+<ul class="manga__nav {% if chapter.read_left %}manga__read-left{% else %} manga__read-right {% endif %}">
+  {% if chapter.get_prev is not False %}
+  <li><a href="{{ chapter.get_prev }}" alt="Prev">
+    {% if chapter.read_left %}
+      Prev &gt;&gt;
+    {% else %}
+      &lt;&lt; Prev
+    {% endif %}
+  </a></li>
+  {% endif %}
+  {% if chapter.get_next is not False %}
+  <li><a href="{{ chapter.get_next }}" alt="Next">
+    {% if chapter.read_left %}
+      &lt;&lt; Next 
+    {% else %}
+      Next &gt;&gt;
+    {% endif %}
+  </a></li>
+  {% endif %}
+</ul>
+{% endif %}

@@ -15,11 +15,14 @@ from django.utils.timezone import now
 class Manga(models.Model): # A manga series
     name = models.CharField(max_length=1000)
     url_key = models.CharField(max_length=1000)
-    author = models.CharField(max_length=200)
+    author = models.CharField(max_length=200, blank=True)
+    illustrator = models.CharField(max_length=200, blank=True)
     chapters = models.IntegerField(default=1)
     dir_name = models.CharField(max_length=1000)
     dir_abs_path = models.CharField(max_length=1200)
     dir_media_path = models.CharField(max_length=1000)
+    cover_chapter = models.IntegerField(default=1)
+    cover_page = models.IntegerField(default=1)
     cover_path = models.CharField(max_length=2400)
     pub_date = models.DateTimeField(verbose_name='date published', blank=True, null=True)
     created_date = models.DateTimeField(verbose_name='entry creation date', default=now)
@@ -33,3 +36,25 @@ class Manga(models.Model): # A manga series
         Returns all related Chapters
         """
         return self.chapter_set.all().order_by('-update_date')
+
+    def get_by_slug(slug):
+        """
+        Returns the Manga object from a slug input.
+        Returns False if no match is found
+        """
+        manga_filter = Manga.objects.filter(
+            url_key = slug
+        )
+        if manga_filter.exists():
+            return manga_filter.get()
+        else:
+            return False
+
+    def is_single_chapter(self):
+        """
+        Returns True if this Manga only has one chapter, and False otherwise.
+        """
+        if self.get_chapters().count() == 1:
+            return True
+        else:
+            return False

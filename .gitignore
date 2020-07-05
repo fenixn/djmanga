@@ -6,6 +6,7 @@ __pycache__/
 docker-compose.yml
 
 # Ignore media files, but not media file structure
+!/www/media/
 /www/media/*
 !/www/media/manga/
 /www/media/manga/*

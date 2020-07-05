@@ -9,9 +9,9 @@
       <ul class='manga__list'>
       {% for manga in manga_list %}
         <li>
-          <a href="{% url 'manga:manga-view' manga.url_key %}">
+          <a href="{% url 'manga:manga-view' manga.url_key %}{% if manga.is_single_chapter %}1{% endif %}">
             <img src="{{ BASE_URL }}/{{ manga.cover_path }}" alt="{{ manga.name }}" />
-            <span>{{ manga.name }}</span>
+            <span>{{manga.author}} - {{ manga.name }}</span>
           </a>
         </li>
       {% endfor %}
