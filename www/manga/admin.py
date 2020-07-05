@@ -3,8 +3,8 @@ from django.contrib import admin
 from .models import Manga, Chapter, Page
 
 class MangaAdmin(admin.ModelAdmin):
-    list_display = ('name', 'url_key', 'author', 'dir_name')
-    search_fields = ('name', 'author')
+    list_display = ('name', 'url_key', 'author', 'illustrator', 'dir_name')
+    search_fields = ('name', 'author', 'illustrator')
 
 class ChapterAdmin(admin.ModelAdmin):
     list_display = ('manga', 'chapter', 'name', 'dir_name', 'read_left')

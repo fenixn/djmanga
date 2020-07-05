@@ -8,12 +8,25 @@
   <div class='manga'>
     <a href="{{ BASE_URL }}/manga/{{manga.url_key}}"><h1>{{ manga.name }}</h1></a>
     <h2>Chapter {{ chapter.chapter }}</h2>
+
+    {% include "manga/chapter-nav.html" %}
+
     <ul class='manga__page-list {% if chapter.read_left %}manga__read-left{% else %} manga__read-right {% endif %}'>
       {% for page in chapter.get_pages %}
         <li>
+            {% if forloop.first and chapter.get_prev is not False %}
+            <a href="{{ chapter.get_prev }}" alt="Prev">
+            {% elif forloop.last and chapter.get_next is not False %}
+            <a href="{{ chapter.get_next }}" alt="Prev">
+            {% endif %}
             <img src='{{ BASE_URL }}/{{ page.file_media_path }}' alt='Page {{ page.page }}' />
+            {% if forloop.first or forloop.last %}
+            </a>
+            {% endif %}
         </li>
       {% endfor %}
     </ul>
+
+    {% include "manga/chapter-nav.html" %}
   </div>
 {% endblock %}

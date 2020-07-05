@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
@@ -20,13 +20,17 @@ class IndexView(ListView):
         """
         return Manga.objects.order_by('-update_date')
 
-class MangaDetailView(DetailView):
+def manga_view(request, url_key):
     template_name = 'manga/manga-view.html'
-    slug_field = 'url_key'
-    slug_url_kwarg = 'url_key'
-
-    def get_queryset(self):
-        return Manga.objects
+    manga = Manga.get_by_slug(url_key)
+    if manga == False:
+        return render(request, template_name, {
+            'error_message': 'The Manga cannot be found.'
+        })
+    else:
+        return render(request, template_name, {
+            'manga': manga
+        })
     
 def chapter_view(request, url_key, chapter):
     template_name = 'manga/chapter-view.html'
