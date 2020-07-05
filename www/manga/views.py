@@ -41,6 +41,7 @@ def chapter_view(request, url_key, chapter):
             chapter = chapter
         ).get()
         return render(request, template_name, {
+            'manga': manga,
             'chapter': current_chapter
         })
 

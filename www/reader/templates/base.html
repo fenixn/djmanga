@@ -10,12 +10,14 @@
         {% block headscripts %}{% endblock %}
     </head>
     <body>
-        {% block sidebar %}
+        {% block menubar %}
         <nav>
-            <a href="{{ BASE_URL }}/admin">Admin</a>
-            <a href="{{ BASE_URL }}/">Home</a>
-            <a href="{{ BASE_URL }}/manga">Manga</a>
-            <a href="{{ BASE_URL }}/manga/scan/">Scan For Manga</a>
+            <ul>
+                <li><a href="{{ BASE_URL }}/admin">Admin</a></li>
+                <li><a href="{{ BASE_URL }}/">Home</a></li>
+                <li><a href="{{ BASE_URL }}/manga">Manga</a></li>
+                <li class='last'><a href="{{ BASE_URL }}/manga/scan/">Scan For Manga</a></li>
+            </ul>
         </nav>
         {% endblock %}
         {% block content %}{% endblock %}
