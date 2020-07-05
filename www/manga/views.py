@@ -1,4 +1,3 @@
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
@@ -9,6 +8,7 @@ from django.views.generic import ListView
 from django.views.generic import TemplateView
 
 from .models import Manga
+from .models import Chapter
 from .models import Scan
 
 class IndexView(ListView):
@@ -27,6 +27,22 @@ class MangaDetailView(DetailView):
 
     def get_queryset(self):
         return Manga.objects
+    
+def chapter_view(request, url_key, chapter):
+    template_name = 'manga/chapter-view.html'
+    manga = Chapter.get_manga_by_slug(url_key)
+    if manga == False:
+        return render(request, template_name, {
+            'error_message': 'The Manga cannot be found.'
+        })
+    else:
+        current_chapter = Chapter.objects.filter(
+            manga = manga,
+            chapter = chapter
+        ).get()
+        return render(request, template_name, {
+            'chapter': current_chapter
+        })
 
 class ScanView(TemplateView):
     template_name = "manga/scan.html"
