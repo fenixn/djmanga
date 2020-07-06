@@ -11,9 +11,9 @@
 
     {% include "manga/chapter-nav.html" %}
 
-    <ul class='manga__page-list {% if chapter.read_left %}manga__read-left{% else %} manga__read-right {% endif %}'>
+    <ul class='manga__page-list {% if chapter.read_left %}manga__read-left{% else %} manga__read-right {% endif %}'><!--
       {% for page in chapter.get_pages %}
-        <li>
+        --><li>
             {% if forloop.first and chapter.get_prev is not False %}
             <a href="{{ chapter.get_prev }}" alt="Prev">
             {% elif forloop.last and chapter.get_next is not False %}
@@ -23,9 +23,9 @@
             {% if forloop.first or forloop.last %}
             </a>
             {% endif %}
-        </li>
+        </li><!--
       {% endfor %}
-    </ul>
+    --></ul>
 
     {% include "manga/chapter-nav.html" %}
   </div>

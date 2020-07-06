@@ -1,0 +1,12 @@
+@media screen and (max-width: 1000px) and (orientation: portrait) {
+    .manga__page-list li {
+        width: 100%;
+        height: unset;
+        max-height: unset;
+        padding: 0.25vw 0.5vw;
+    }
+    .manga__page-list img {
+        padding: unset;
+        max-width: 100%;
+    }
+}

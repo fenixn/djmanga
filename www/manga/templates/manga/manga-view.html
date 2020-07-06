@@ -11,10 +11,17 @@
     <ul class='manga__list'>
       {% for chapter in manga.get_chapters %}
         <li>
-          <a href="{% url 'manga:manga-view' manga.url_key %}{{ chapter.chapter }}">
-            <img src='{{ BASE_URL }}/{{ chapter.get_chapter_cover }}' alt='{{ chapter.name }}' />
-            <span>Chapter {{ chapter.chapter }}</span>
-          </a>
+          <div class='manga__list-manga'>
+            <a href="{% url 'manga:manga-view' manga.url_key %}{{ chapter.chapter }}">
+              <div><span>
+                Chapter {{ chapter.chapter }}
+                {% if chapter.name %}
+                  - {{ chapter.name }}
+                {% endif %}
+              </span></div>
+              <img src='{{ BASE_URL }}/{{ chapter.get_chapter_cover }}' alt='{{ chapter.name }}' />
+            </a>
+          </div>
         </li>
       {% endfor %}
     </ul>
