@@ -12,7 +12,10 @@ from django.apps import apps
 from django.utils import timezone
 from django.utils.timezone import now
 
+from tags.models import Tag
+
 class Manga(models.Model): # A manga series
+    tags = models.ManyToManyField(Tag) # Manga can have many tags for filtering
     name = models.CharField(max_length=1000)
     url_key = models.CharField(max_length=1000)
     author = models.CharField(max_length=200, blank=True)
@@ -35,7 +38,7 @@ class Manga(models.Model): # A manga series
         """
         Returns all related Chapters
         """
-        return self.chapter_set.all().order_by('-update_date')
+        return self.chapter_set.all().order_by('-chapter')
 
     def get_by_slug(slug):
         """
