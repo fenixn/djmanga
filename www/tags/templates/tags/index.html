@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Djmanga Reader - Tags{% endblock %}
+
+{% block content %}
+  <div class='tags'>
+    <h1>Tags</h1>
+    {% if tags_list %}
+      <ul class='tags__list'>
+      {% for tag in tags_list %}
+        <li>
+          <a href="">
+            <span>
+                {% if tag.parent %}
+                    {{ tag.parent}} -
+                {% endif %} 
+                {{ tag.name }}
+            </span>
+          </a>
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>There are not yet any tags</p>
+    {% endif %}
+  </div>
+{% endblock %}

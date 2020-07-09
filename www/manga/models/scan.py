@@ -225,19 +225,17 @@ class Scan(models.Model):
         """
         Update the tags for the manga
         """
-        find_tags = Tag.objects.all().filter(
-            name = [tags]
-        )
-        if find_tags.exists():
-            manga.tags.add(tags)
-            manga.save()
-        else:
-            tags = tags.split(',')
-            for tag in tags:
+        tags = tags.split(',')
+        for tag in tags:
+            find_tag = Tag.objects.filter(name=tag)
+            if find_tag.exists():
+                manga.tags.add(find_tag.get())
+            else:
                 new_tag = Tag.objects.create(
                     name = tag
                 )
                 manga.tags.add(new_tag)
-            manga.save()
+        manga.save()
         return
+
 
