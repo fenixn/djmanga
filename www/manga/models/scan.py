@@ -4,6 +4,8 @@ import logging
 import re
 import json
 
+from natsort import natsorted
+
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.staticfiles.utils import get_files
 from django.contrib.staticfiles.storage import StaticFilesStorage
@@ -16,6 +18,7 @@ from django.utils.timezone import now
 from .manga import Manga
 from .chapter import Chapter
 from .page import Page
+from tags.models import Tag
 
 class Scan(models.Model):
     def __init__(self):
@@ -45,6 +48,7 @@ class Scan(models.Model):
             if entry.is_dir():
                 scan_chapter_list.append(entry.name)
         if len(scan_chapter_list) > 0:
+            scan_chapter_list = natsorted(scan_chapter_list)
             return scan_chapter_list
         else:
             return False
@@ -60,6 +64,7 @@ class Scan(models.Model):
             if entry.is_file() and entry.name != 'info.json':
                 scan_page_list.append(entry.name)
         if len(scan_page_list) > 0:
+            scan_page_list = natsorted(scan_page_list)
             page_count = 1
             for page in scan_page_list:
                 page_filter = Page.objects.filter(
@@ -136,7 +141,6 @@ class Scan(models.Model):
                     existing_manga.save()
                 info_abs_path = self.manga_dir_url + '/' + manga + '/info.json'
                 self.update_model_from_info(existing_manga, info_abs_path)
-                self.update_manga_cover_path(existing_manga)
             else:
                 # No entry is found, create one.
                 # url_key regex replaces all but alphanumeric with a space
@@ -193,7 +197,10 @@ class Scan(models.Model):
             info_file = open(info_abs_path, 'r')
             info_json = json.load(info_file)
             for attribute in info_json:
-                setattr(model, attribute, info_json[attribute])
+                if attribute != "tags":
+                    setattr(model, attribute, info_json[attribute])
+                else:
+                    self.update_manga_tags(model, info_json[attribute])
             model.save()
         return
 
@@ -213,3 +220,24 @@ class Scan(models.Model):
             if cover_page.exists():
                 manga.cover_path = cover_page.get().file_media_path
                 manga.save()
+        return
+
+    def update_manga_tags(self, manga, tags):
+        """
+        Update the tags for the manga
+        """
+        tags = tags.split(',')
+        for tag in tags:
+            tag = tag.strip()
+            find_tag = Tag.objects.filter(name=tag)
+            if find_tag.exists():
+                manga.tags.add(find_tag.get())
+            else:
+                new_tag = Tag.objects.create(
+                    name = tag
+                )
+                manga.tags.add(new_tag)
+        manga.save()
+        return
+
+

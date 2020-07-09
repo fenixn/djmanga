@@ -5,6 +5,7 @@ from .models import Manga, Chapter, Page
 class MangaAdmin(admin.ModelAdmin):
     list_display = ('name', 'url_key', 'author', 'illustrator', 'dir_name')
     search_fields = ('name', 'author', 'illustrator')
+    filter_horizontal = ('tags',)
 
 class ChapterAdmin(admin.ModelAdmin):
     list_display = ('manga', 'chapter', 'name', 'dir_name', 'read_left')

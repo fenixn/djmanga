@@ -6,6 +6,7 @@
         <title>{% block title %}Djmanga Reader{% endblock %}</title>
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'global/style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'global/responsive.css' %}">
         {% block stylesheets %}{% endblock %}
         {% block headscripts %}{% endblock %}
     </head>
@@ -16,11 +17,14 @@
                 <li><a href="{{ BASE_URL }}/admin">Admin</a></li>
                 <li><a href="{{ BASE_URL }}/">Home</a></li>
                 <li><a href="{{ BASE_URL }}/manga">Manga</a></li>
+                <li><a href="{{ BASE_URL }}/tags">Tags</a></li>
                 <li class='last'><a href="{{ BASE_URL }}/manga/scan/">Scan For Manga</a></li>
             </ul>
         </nav>
         {% endblock %}
-        {% block content %}{% endblock %}
+        <main>
+            {% block content %}{% endblock %}
+        </main>
     </body>
     <footer>
         {% block footer %}{% endblock %}

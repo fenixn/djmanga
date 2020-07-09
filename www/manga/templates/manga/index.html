@@ -9,10 +9,23 @@
       <ul class='manga__list'>
       {% for manga in manga_list %}
         <li>
-          <a href="{% url 'manga:manga-view' manga.url_key %}{% if manga.is_single_chapter %}1{% endif %}">
-            <img src="{{ BASE_URL }}/{{ manga.cover_path }}" alt="{{ manga.name }}" />
-            <span>{{manga.author}} - {{ manga.name }}</span>
-          </a>
+          <div>
+            <a href="{% url 'manga:manga-view' manga.url_key %}{% if manga.is_single_chapter %}1{% endif %}">
+                <img src="{{ BASE_URL }}/{{ manga.cover_path }}" alt="{{ manga.name }}" />
+                <span>{{ manga.name }}</span>
+            </a>
+          </div>
+          {% if manga.author %}
+          <div>Author: {{manga.author}}</div>
+          {% endif %}
+          {% if manga.tags.all %}
+          <div class="manga__tag-list">
+            Tags:&nbsp;
+            {% for tag in manga.tags.all %}
+              <a href="{% url 'tags:tag-view' tag.name %}">{{ tag }}</a>{% if not forloop.last %},&nbsp;{% endif %}
+            {% endfor %}
+          </div>
+          {% endif %}
         </li>
       {% endfor %}
       </ul>
