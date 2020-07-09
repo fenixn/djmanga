@@ -17,3 +17,15 @@ class IndexView(ListView):
         Return tags list
         """
         return Tag.objects.order_by('name')
+
+def tag_view(request, tag):
+    template_name = 'tags/tag-view.html'
+    find_tag = Tag.get_by_name(tag)
+    if find_tag == False:
+        return render(request, template_name, {
+            'error_message': 'The tag cannot be found.'
+        })
+    else:
+        return render(request, template_name, {
+            'tag': find_tag
+        })

@@ -19,10 +19,10 @@
           <div>Author: {{manga.author}}</div>
           {% endif %}
           {% if manga.tags.all %}
-          <div>
-            Tags: 
+          <div class="manga__tag-list">
+            Tags:&nbsp;
             {% for tag in manga.tags.all %}
-              {{ tag }}{% if not forloop.last %},{% endif %}
+              <a href="{% url 'tags:tag-view' tag.name %}">{{ tag }}</a>{% if not forloop.last %},&nbsp;{% endif %}
             {% endfor %}
           </div>
           {% endif %}

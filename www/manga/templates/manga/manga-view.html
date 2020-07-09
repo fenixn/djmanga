@@ -7,6 +7,16 @@
 {% block content %}
   <div class='manga'>
     <h1>{{ manga.name }}</h1>
+    <div class="manga__tag-list">
+      {% if manga.tags.all %}
+      <div class="manga__tag-list">
+        Tags:&nbsp;
+        {% for tag in manga.tags.all %}
+          <a href="{% url 'tags:tag-view' tag.name %}">{{ tag }}</a>{% if not forloop.last %},&nbsp;{% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
     <h2>Chapters</h2>
     <ul class='manga__list'>
       {% for chapter in manga.get_chapters %}

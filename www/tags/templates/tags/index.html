@@ -9,7 +9,7 @@
       <ul class='tags__list'>
       {% for tag in tags_list %}
         <li>
-          <a href="">
+          <a href="{% url 'tags:tag-view' tag.name %}">
             <span>
                 {% if tag.parent %}
                     {{ tag.parent}} -

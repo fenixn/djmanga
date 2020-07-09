@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Tag {% if tag %}- {{ tag }}{% endif %}{% endblock %}
+
+{% block content %}
+  <div class='tags'>
+    <h1>Tag{% if tag %}{{ tag }}{% endif %}</h1>
+    {% if tag.get_manga %}
+      <ul class='tags__manga-list'>
+      {% for manga in tag.get_manga %}
+        <li>
+            <a href="{% url 'manga:manga-view' manga.url_key %}">
+            <span>
+                {{ manga.name }}
+            </span>
+          </a>
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>There are no Manga for this tag.</p>
+    {% endif %}
+  </div>
+{% endblock %}

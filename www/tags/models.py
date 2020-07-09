@@ -25,3 +25,22 @@ class Tag(models.Model):
             return self.display
         else:
             return self.name
+
+    def get_by_name(name):
+        """
+        Returns the Tag object from a name input.
+        Returns False if no match is found
+        """
+        tag_filter = Tag.objects.filter(
+            name = name
+        )
+        if tag_filter.exists():
+            return tag_filter.get()
+        else:
+            return False
+
+    def get_manga(self):
+        """
+        Returns all related Manga
+        """
+        return self.manga_set.all().order_by('name')

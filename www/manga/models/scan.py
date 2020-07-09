@@ -64,6 +64,7 @@ class Scan(models.Model):
             if entry.is_file() and entry.name != 'info.json':
                 scan_page_list.append(entry.name)
         if len(scan_page_list) > 0:
+            scan_page_list = natsorted(scan_page_list)
             page_count = 1
             for page in scan_page_list:
                 page_filter = Page.objects.filter(
@@ -227,6 +228,7 @@ class Scan(models.Model):
         """
         tags = tags.split(',')
         for tag in tags:
+            tag = tag.strip()
             find_tag = Tag.objects.filter(name=tag)
             if find_tag.exists():
                 manga.tags.add(find_tag.get())
