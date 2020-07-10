@@ -13,13 +13,14 @@ from django.utils import timezone
 from django.utils.timezone import now
 
 from tags.models import Tag
+from person.models import Person
 
 class Manga(models.Model): # A manga series
     tags = models.ManyToManyField(Tag) # Manga can have many tags for filtering
     name = models.CharField(max_length=1000)
     url_key = models.CharField(max_length=1000)
-    author = models.CharField(max_length=200, blank=True)
-    illustrator = models.CharField(max_length=200, blank=True)
+    author = models.ManyToManyField(Person, related_name = 'author') # A Manga can have many authors
+    illustrator = models.ManyToManyField(Person, related_name= 'illustrator') # Manga can have many illustrators
     chapters = models.IntegerField(default=1)
     dir_name = models.CharField(max_length=1000)
     dir_abs_path = models.CharField(max_length=1200)

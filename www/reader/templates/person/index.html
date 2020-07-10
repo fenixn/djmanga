@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Djmanga Reader - People{% endblock %}
+
+{% block content %}
+  <div class='people'>
+    <h1>People</h1>
+    {% if person_list %}
+      <ul class='people__list'>
+      {% for person in people__list %}
+        <li>
+          <a href="{% url 'person:person-view' person.slug %}">
+            <span>
+                {{ person.name }}
+            </span>
+          </a>
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>There are not yet any people.</p>
+    {% endif %}
+  </div>
+{% endblock %}
