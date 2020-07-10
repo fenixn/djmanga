@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Person{% if person %} - {{ person.name }}{% endif %}{% endblock %}
+
+{% block content %}
+  <div class='people'>
+    <h1>Person{% if person %} - {{ person.name }}{% endif %}</h1>
+    {% if person.get_authored_manga or person.get_illustrated_manga %}
+    {% if person.get_authored_manga %}
+    <h2>Author of:</h2>
+    <ul class='people__manga-list'>
+      {% for manga in person.get_authored_manga %}
+      <li>
+          <a href="{% url 'manga:manga-view' manga.url_key %}">
+          <span>
+              {{ manga.name }}
+          </span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% if person.get_illustrated_manga %}
+    <h2>Illustrator of:</h2>
+    <ul class='people__manga-list'>
+      {% for manga in person.get_illustrated_manga %}
+      <li>
+          <a href="{% url 'manga:manga-view' manga.url_key %}">
+          <span>
+              {{ manga.name }}
+          </span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% else %}
+      <p>There are no Manga related to this person.</p>
+    {% endif %}
+  </div>
+{% endblock %}

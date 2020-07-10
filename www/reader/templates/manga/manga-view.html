@@ -7,6 +7,7 @@
 {% block content %}
   <div class='manga'>
     <h1>{{ manga.name }}</h1>
+    {% include "manga/people-block.html" %}
     <div class="manga__tag-list">
       {% if manga.tags.all %}
       <div class="manga__tag-list">

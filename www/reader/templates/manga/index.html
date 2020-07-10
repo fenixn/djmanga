@@ -15,8 +15,21 @@
                 <span>{{ manga.name }}</span>
             </a>
           </div>
-          {% if manga.author %}
-          <div>Author: {{manga.author}}</div>
+          {% if manga.author.all %}
+          <div>
+            Author: 
+            {% for author in manga.author.all %}
+              <a href="{% url 'person:person-view' author.slug %}">{{ author }}</a>{% if not forloop.last %},&nbsp;{% endif %}
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% if manga.illustrator.all %}
+          <div>
+            Illustrator: 
+            {% for illustrator in manga.illustrator.all %}
+              <a href="{% url 'person:person-view' illustrator.slug %}">{{ illustrator }}</a>{% if not forloop.last %},&nbsp;{% endif %}
+            {% endfor %}
+          </div>
           {% endif %}
           {% if manga.tags.all %}
           <div class="manga__tag-list">

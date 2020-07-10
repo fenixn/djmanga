@@ -19,6 +19,7 @@ from .manga import Manga
 from .chapter import Chapter
 from .page import Page
 from tags.models import Tag
+from person.models import Person
 
 class Scan(models.Model):
     def __init__(self):
@@ -141,6 +142,7 @@ class Scan(models.Model):
                     existing_manga.save()
                 info_abs_path = self.manga_dir_url + '/' + manga + '/info.json'
                 self.update_model_from_info(existing_manga, info_abs_path)
+                self.update_manga_cover_path(existing_manga)
             else:
                 # No entry is found, create one.
                 # url_key regex replaces all but alphanumeric with a space
@@ -197,10 +199,12 @@ class Scan(models.Model):
             info_file = open(info_abs_path, 'r')
             info_json = json.load(info_file)
             for attribute in info_json:
-                if attribute != "tags":
-                    setattr(model, attribute, info_json[attribute])
-                else:
+                if attribute == "tags":
                     self.update_manga_tags(model, info_json[attribute])
+                elif (attribute == "author" or attribute == "illustrator"):
+                    self.update_manga_person(model, info_json[attribute], attribute)
+                else:
+                    setattr(model, attribute, info_json[attribute])
             model.save()
         return
 
@@ -228,7 +232,7 @@ class Scan(models.Model):
         """
         tags = tags.split(',')
         for tag in tags:
-            tag = tag.strip()
+            tag = re.sub(r'\W+', ' ', tag).strip().replace(' ', '-').lower()
             find_tag = Tag.objects.filter(name=tag)
             if find_tag.exists():
                 manga.tags.add(find_tag.get())
@@ -239,5 +243,29 @@ class Scan(models.Model):
                 manga.tags.add(new_tag)
         manga.save()
         return
+
+    def update_manga_person(self, manga, people, role):
+        """
+        Update a person's role with a manga
+        """
+        people = people.split(',')
+        for person in people:
+            person = person.strip()
+            find_person = Person.objects.filter(name=person)
+            if find_person.exists():
+                if role == "author":
+                    manga.author.add(find_person.get())
+                elif role == "illustrator":
+                    manga.illustrator.add(find_person.get())
+            else:
+                new_person = Person.objects.create(
+                    name = person,
+                    slug = re.sub(r'\W+', ' ', person).strip().replace(' ', '-').lower()
+                )
+                if role == "author":
+                    manga.author.add(new_person)
+                elif role == "illustrator":
+                    manga.illustrator.add(new_person)
+        manga.save()
 
 
