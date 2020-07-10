@@ -141,6 +141,7 @@ class Scan(models.Model):
                     existing_manga.save()
                 info_abs_path = self.manga_dir_url + '/' + manga + '/info.json'
                 self.update_model_from_info(existing_manga, info_abs_path)
+                self.update_manga_cover_path(existing_manga)
             else:
                 # No entry is found, create one.
                 # url_key regex replaces all but alphanumeric with a space

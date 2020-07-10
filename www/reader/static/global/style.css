@@ -67,8 +67,11 @@ main {
 .manga__page-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: 0;
+}
+.manga__list {
+    margin: -0.5%;
 }
 .manga__page-list {
     flex-direction: row-reverse;
@@ -83,8 +86,8 @@ main {
     text-decoration: none;
 }
 .manga__list li {
-    width: 24%;
-    padding: 0.5em 0;
+    width: 16.66%;
+    padding: 0.5%;
 }
 .manga__list-manga {
     background: #111111;
@@ -102,10 +105,14 @@ main {
 }
 .manga__list li .manga__tag-list {
     flex-direction: row;
+    flex-wrap: wrap;
 }
 .manga__list img,
 .manga__page-list img {
     width: 100%;
+}
+.manga__list img {
+    max-height: 55vh;
 }
 .manga__page-list li {
     max-width: 100%;

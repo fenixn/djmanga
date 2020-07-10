@@ -18,6 +18,9 @@
           {% if manga.author %}
           <div>Author: {{manga.author}}</div>
           {% endif %}
+          {% if manga.illustrator %}
+          <div>Illustrator: {{manga.illustrator}}</div>
+          {% endif %}
           {% if manga.tags.all %}
           <div class="manga__tag-list">
             Tags:&nbsp;
