@@ -107,8 +107,7 @@ main {
     flex-direction: row;
     flex-wrap: wrap;
 }
-.manga__list img,
-.manga__page-list img {
+.manga__list img {
     width: 100%;
 }
 .manga__list img {

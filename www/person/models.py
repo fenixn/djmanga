@@ -35,8 +35,14 @@ class Person(models.Model):
         else:
             return False
 
-    def get_manga(self):
+    def get_authored_manga(self):
         """
-        Returns all related Manga
+        Returns all  Manga authored by this person
         """
-        return self.manga_set.all().order_by('name')
+        return self.author.all().order_by('name')
+
+    def get_illustrated_manga(self):
+        """
+        Returns all  Manga illustrated by this person
+        """
+        return self.illustrator.all().order_by('name')

@@ -201,7 +201,7 @@ class Scan(models.Model):
             for attribute in info_json:
                 if attribute == "tags":
                     self.update_manga_tags(model, info_json[attribute])
-                elif attribute == "author" or attribute == "illustrator":
+                elif (attribute == "author" or attribute == "illustrator"):
                     self.update_manga_person(model, info_json[attribute], attribute)
                 else:
                     setattr(model, attribute, info_json[attribute])
@@ -232,7 +232,7 @@ class Scan(models.Model):
         """
         tags = tags.split(',')
         for tag in tags:
-            tag = tag.strip()
+            tag = re.sub(r'\W+', ' ', tag).strip().replace(' ', '-').lower()
             find_tag = Tag.objects.filter(name=tag)
             if find_tag.exists():
                 manga.tags.add(find_tag.get())

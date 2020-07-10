@@ -11,7 +11,7 @@ from .models import Person
 
 class IndexView(ListView):
     template_name = 'person/index.html'
-    context_object_name = 'tags_list'
+    context_object_name = 'people_list'
     def get_queryset(self):
         """
         Return people list

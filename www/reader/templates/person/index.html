@@ -5,9 +5,9 @@
 {% block content %}
   <div class='people'>
     <h1>People</h1>
-    {% if person_list %}
+    {% if people_list %}
       <ul class='people__list'>
-      {% for person in people__list %}
+      {% for person in people_list %}
         <li>
           <a href="{% url 'person:person-view' person.slug %}">
             <span>
