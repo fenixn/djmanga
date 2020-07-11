@@ -1,5 +1,5 @@
-{% if manga.is_single_chapter is False %}
-<ul class="manga__nav {% if chapter.read_left %}manga__read-left{% else %} manga__read-right {% endif %}">
+{% if book.is_single_chapter is False %}
+<ul class="book__nav {% if chapter.read_left %}book__read-left{% else %} book__read-right {% endif %}">
   {% if chapter.get_prev is not False %}
   <li><a href="{{ chapter.get_prev }}" alt="Prev">
     {% if chapter.read_left %}

@@ -12,10 +12,10 @@ from django.utils import timezone
 from django.utils.timezone import now
 from django.urls import resolve
 
-from .manga import Manga
+from .book import Book
 
-class Chapter(models.Model): # A single chapter of a manga
-    manga = models.ForeignKey(Manga, on_delete=models.CASCADE)
+class Chapter(models.Model): # A single chapter of a book
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
     name = models.CharField(max_length=1000)
     chapter = models.IntegerField(default=1)
     read_left = models.BooleanField(verbose_name='read right to left?', default=True)
@@ -35,16 +35,16 @@ class Chapter(models.Model): # A single chapter of a manga
         """
         return self.page_set.filter(chapter=self, page=1).get().file_media_path
 
-    def get_manga_by_slug(slug):
+    def get_book_by_slug(slug):
         """
-        Returns the Manga object from a slug input.
+        Returns the Book object from a slug input.
         Returns False if no match is found
         """
-        manga_filter = Manga.objects.filter(
+        book_filter = Book.objects.filter(
             url_key = slug
         )
-        if manga_filter.exists():
-            return manga_filter.get()
+        if book_filter.exists():
+            return book_filter.get()
         else:
             return False
 
@@ -60,11 +60,11 @@ class Chapter(models.Model): # A single chapter of a manga
         Returns False if there is no next chapter.
         """
         next_chapter = Chapter.objects.filter(
-            manga = self.manga,
+            book = self.book,
             chapter = self.chapter + 1
         )
         if next_chapter.exists():
-            return '/manga/' + self.manga.url_key + '/' + str(self.chapter + 1)
+            return '/book/' + self.book.url_key + '/' + str(self.chapter + 1)
         else:
             return False
 
@@ -74,10 +74,10 @@ class Chapter(models.Model): # A single chapter of a manga
         Returns False if there is no previous chapter.
         """
         prev_chapter = Chapter.objects.filter(
-            manga = self.manga,
+            book = self.book,
             chapter = self.chapter - 1
         )
         if prev_chapter.exists():
-            return '/manga/' + self.manga.url_key + '/' + str(self.chapter - 1)
+            return '/book/' + self.book.url_key + '/' + str(self.chapter - 1)
         else:
             return False

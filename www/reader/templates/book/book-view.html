@@ -1,29 +1,29 @@
 {% extends "base.html" %}
 
 {% block title %}
-  {{ manga.name }} - Djmanga Reader
+  {{ book.name }} - Djmanga Reader
 {% endblock %}
 
 {% block content %}
-  <div class='manga'>
-    <h1>{{ manga.name }}</h1>
-    {% include "manga/people-block.html" %}
-    <div class="manga__tag-list">
-      {% if manga.tags.all %}
-      <div class="manga__tag-list">
+  <div class='book'>
+    <h1>{{ book.name }}</h1>
+    {% include "book/people-block.html" %}
+    <div class="book__tag-list">
+      {% if book.tags.all %}
+      <div class="book__tag-list">
         Tags:&nbsp;
-        {% for tag in manga.tags.all %}
+        {% for tag in book.tags.all %}
           <a href="{% url 'tags:tag-view' tag.name %}">{{ tag }}</a>{% if not forloop.last %},&nbsp;{% endif %}
         {% endfor %}
       </div>
       {% endif %}
     </div>
     <h2>Chapters</h2>
-    <ul class='manga__list'>
-      {% for chapter in manga.get_chapters %}
+    <ul class='book__list'>
+      {% for chapter in book.get_chapters %}
         <li>
-          <div class='manga__list-manga'>
-            <a href="{% url 'manga:manga-view' manga.url_key %}{{ chapter.chapter }}">
+          <div class='book__list-book'>
+            <a href="{% url 'book:book-view' book.url_key %}{{ chapter.chapter }}">
               <div><span>
                 Chapter {{ chapter.chapter }}
                 {% if chapter.name %}

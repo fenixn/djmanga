@@ -5,29 +5,29 @@
 {% block content %}
   <div class='people'>
     <h1>Person{% if person %} - {{ person.name }}{% endif %}</h1>
-    {% if person.get_authored_manga or person.get_illustrated_manga %}
-    {% if person.get_authored_manga %}
+    {% if person.get_authored_book or person.get_illustrated_book %}
+    {% if person.get_authored_book %}
     <h2>Author of:</h2>
-    <ul class='people__manga-list'>
-      {% for manga in person.get_authored_manga %}
+    <ul class='people__book-list'>
+      {% for book in person.get_authored_book %}
       <li>
-          <a href="{% url 'manga:manga-view' manga.url_key %}">
+          <a href="{% url 'book:book-view' book.url_key %}">
           <span>
-              {{ manga.name }}
+              {{ book.name }}
           </span>
         </a>
       </li>
       {% endfor %}
     </ul>
     {% endif %}
-    {% if person.get_illustrated_manga %}
+    {% if person.get_illustrated_book %}
     <h2>Illustrator of:</h2>
-    <ul class='people__manga-list'>
-      {% for manga in person.get_illustrated_manga %}
+    <ul class='people__book-list'>
+      {% for book in person.get_illustrated_book %}
       <li>
-          <a href="{% url 'manga:manga-view' manga.url_key %}">
+          <a href="{% url 'book:book-view' book.url_key %}">
           <span>
-              {{ manga.name }}
+              {{ book.name }}
           </span>
         </a>
       </li>
