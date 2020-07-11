@@ -16,13 +16,15 @@ from tags.models import Tag
 from person.models import Person
 
 class Book(models.Model): # A book series
-    tags = models.ManyToManyField(Tag) # Book can have many tags for filtering
     name = models.CharField(max_length=1000)
     url_key = models.CharField(max_length=1000)
+    book_type = models.CharField(max_length=50, default='manga')
     author = models.ManyToManyField(Person, related_name = 'author') # A Book can have many authors
     illustrator = models.ManyToManyField(Person, related_name= 'illustrator') # Book can have many illustrators
+    tags = models.ManyToManyField(Tag) # Book can have many tags for filtering
     chapters = models.IntegerField(default=1)
     dir_name = models.CharField(max_length=1000)
+    dir_update_timestamp = models.IntegerField(verbose_name='directory update date', blank=True, null=True)
     dir_abs_path = models.CharField(max_length=1200)
     dir_media_path = models.CharField(max_length=1000)
     cover_chapter = models.IntegerField(default=1)

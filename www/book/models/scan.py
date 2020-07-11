@@ -102,47 +102,50 @@ class Scan(models.Model):
             book_filter = Book.objects.filter(dir_name = book)
             find_book = book_filter.exists()
             if find_book:
-                # An existing entry is found, scan for new chapters
                 existing_book = book_filter.get()
-                scan_chapter_list = self.get_scan_chapter_list(existing_book)
-                if scan_chapter_list == False:
-                    # No chapter subdir, update pages
-                    chapter = Chapter.objects.filter(
-                        book = existing_book
-                    ).get()
-                    self.update_chapter_pages(chapter)
-                else:
-                    # Go each chapter and find match, create new entry if no
-                    # match is found
-                    chapter_count = 1
-                    for chapter in scan_chapter_list:
-                        chapter_filter = Chapter.objects.filter(
-                            book = existing_book,
-                            dir_name = chapter
-                        )
-                        find_chapter = chapter_filter.exists()
-                        if find_chapter:
-                            # Existing chapter, update pages
-                            self.update_chapter_pages(chapter_filter.get())
-                        else:
-                            # No entry is found, create one
-                            new_chapter = Chapter.objects.create(
+                current_dir_update_timestamp = int(os.stat(existing_book.dir_abs_path).st_mtime)
+                # Only run a new scan if the book directory has seen changes
+                if (existing_book.dir_update_timestamp != current_dir_update_timestamp):
+                    scan_chapter_list = self.get_scan_chapter_list(existing_book)
+                    if scan_chapter_list == False:
+                        # No chapter subdir, update pages
+                        chapter = Chapter.objects.filter(
+                            book = existing_book
+                        ).get()
+                        self.update_chapter_pages(chapter)
+                    else:
+                        # Go each chapter and find match, create new entry if no
+                        # match is found
+                        chapter_count = 1
+                        for chapter in scan_chapter_list:
+                            chapter_filter = Chapter.objects.filter(
                                 book = existing_book,
-                                chapter = chapter_count,
-                                dir_name = chapter,
-                                dir_abs_path = existing_book.dir_abs_path + '/' + chapter,
-                                dir_media_path = existing_book.dir_media_path + '/' + chapter
+                                dir_name = chapter
                             )
-                            # Check folder for info.json to update values for chapter
-                            info_abs_path = new_chapter.dir_media_path + '/info.json'
-                            self.update_model_from_info(new_chapter, info_abs_path)
-                            self.update_chapter_pages(new_chapter)                     
-                        chapter_count += 1
-                    existing_book.chapters = chapter_count - 1
-                    existing_book.save()
-                info_abs_path = self.book_dir_url + '/' + book + '/info.json'
-                self.update_model_from_info(existing_book, info_abs_path)
-                self.update_book_cover_path(existing_book)
+                            find_chapter = chapter_filter.exists()
+                            if find_chapter:
+                                # Existing chapter, update pages
+                                self.update_chapter_pages(chapter_filter.get())
+                            else:
+                                # No entry is found, create one
+                                new_chapter = Chapter.objects.create(
+                                    book = existing_book,
+                                    chapter = chapter_count,
+                                    dir_name = chapter,
+                                    dir_abs_path = existing_book.dir_abs_path + '/' + chapter,
+                                    dir_media_path = existing_book.dir_media_path + '/' + chapter
+                                )
+                                # Check folder for info.json to update values for chapter
+                                info_abs_path = new_chapter.dir_media_path + '/info.json'
+                                self.update_model_from_info(new_chapter, info_abs_path)
+                                self.update_chapter_pages(new_chapter)                     
+                            chapter_count += 1
+                        existing_book.chapters = chapter_count - 1
+                        existing_book.save()
+                    info_abs_path = self.book_dir_url + '/' + book + '/info.json'
+                    self.update_model_from_info(existing_book, info_abs_path)
+                    self.update_book_cover_path(existing_book)
+                    existing_book.dir_update_timestamp = current_dir_update_timestamp
             else:
                 # No entry is found, create one.
                 # url_key regex replaces all but alphanumeric with a space
@@ -189,6 +192,7 @@ class Scan(models.Model):
                         chapter_count += 1
                 # Update Cover For New Book
                 self.update_book_cover_path(new_book)
+                new_book.dir_update_timestamp = os.stat(new_book.dir_abs_path).st_mtime
         return scan_book_list
 
     def update_model_from_info(self, model, info_abs_path):
