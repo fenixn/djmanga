@@ -15,12 +15,12 @@ from django.utils.timezone import now
 from tags.models import Tag
 from person.models import Person
 
-class Manga(models.Model): # A manga series
-    tags = models.ManyToManyField(Tag) # Manga can have many tags for filtering
+class Book(models.Model): # A book series
+    tags = models.ManyToManyField(Tag) # Book can have many tags for filtering
     name = models.CharField(max_length=1000)
     url_key = models.CharField(max_length=1000)
-    author = models.ManyToManyField(Person, related_name = 'author') # A Manga can have many authors
-    illustrator = models.ManyToManyField(Person, related_name= 'illustrator') # Manga can have many illustrators
+    author = models.ManyToManyField(Person, related_name = 'author') # A Book can have many authors
+    illustrator = models.ManyToManyField(Person, related_name= 'illustrator') # Book can have many illustrators
     chapters = models.IntegerField(default=1)
     dir_name = models.CharField(max_length=1000)
     dir_abs_path = models.CharField(max_length=1200)
@@ -43,20 +43,20 @@ class Manga(models.Model): # A manga series
 
     def get_by_slug(slug):
         """
-        Returns the Manga object from a slug input.
+        Returns the Book object from a slug input.
         Returns False if no match is found
         """
-        manga_filter = Manga.objects.filter(
+        book_filter = Book.objects.filter(
             url_key = slug
         )
-        if manga_filter.exists():
-            return manga_filter.get()
+        if book_filter.exists():
+            return book_filter.get()
         else:
             return False
 
     def is_single_chapter(self):
         """
-        Returns True if this Manga only has one chapter, and False otherwise.
+        Returns True if this Book only has one chapter, and False otherwise.
         """
         if self.get_chapters().count() == 1:
             return True

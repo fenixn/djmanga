@@ -1,16 +1,16 @@
-<div class="manga__people">
-    {% if manga.author.all %}
-    <div class="manga__people-author">Author: 
-    {% for author in manga.author.all %}
+<div class="book__people">
+    {% if book.author.all %}
+    <div class="book__people-author">Author: 
+    {% for author in book.author.all %}
         <a href="{% url 'person:person-view' author.slug %}">
         {{ author.name }}
         </a>
     {% endfor %}
     </div>
     {% endif %}
-    {% if manga.illustrator.all %}
-    <div class="manga__people-illustrator">Illustrator: 
-    {% for illustrator in manga.illustrator.all %}
+    {% if book.illustrator.all %}
+    <div class="book__people-illustrator">Illustrator: 
+    {% for illustrator in book.illustrator.all %}
         <a href="{% url 'person:person-view' illustrator.slug %}">
         {{ illustrator.name }}
         </a>

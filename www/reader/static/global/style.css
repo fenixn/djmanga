@@ -54,72 +54,72 @@ nav a {
 main {
     padding: 0 1em;
 }
-.manga__nav {
+.book__nav {
     display: flex;
     justify-content: center;
     flex-direction: row-reverse;
     font-size: 1.5em;
 }
-.manga__nav li {
+.book__nav li {
     padding: 0 0.25em;
 }
-.manga__list,
-.manga__page-list {
+.book__list,
+.book__page-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
     padding: 0;
 }
-.manga__list {
+.book__list {
     margin: -0.5%;
 }
-.manga__page-list {
+.book__page-list {
     flex-direction: row-reverse;
     justify-content: center;
     align-items: center;
 }
-.manga__nav.read-right,
-.manga__read-right {
+.book__nav.read-right,
+.book__read-right {
     flex-direction: row;
 }
-.manga__list a {
+.book__list a {
     text-decoration: none;
 }
-.manga__list li {
+.book__list li {
     width: 16.66%;
     padding: 0.5%;
 }
-.manga__list-manga {
+.book__list-book {
     background: #111111;
 }
-.manga__list-manga div {
+.book__list-book div {
     padding: 0.25em;
     text-align: center;
 }
-.manga__list li > div {
+.book__list li > div {
     display: flex;
     flex-direction: column;
 }
-.manga__list li span {
+.book__list li span {
     text-align: center;
 }
-.manga__list li .manga__tag-list {
+.book__list li .book__tag-list {
     flex-direction: row;
     flex-wrap: wrap;
 }
-.manga__list img {
+.book__list img {
     width: 100%;
 }
-.manga__list img {
+.book__list img {
     max-height: 55vh;
 }
-.manga__page-list li {
+.book__page-list li {
     max-width: 100%;
     height: 90vh;
     max-height: 90vh;
     padding: 1%;
 }
-.manga__page-list img {
+.book__page-list img {
     padding: 1%;
     height: 100%;
     max-width: 100%;

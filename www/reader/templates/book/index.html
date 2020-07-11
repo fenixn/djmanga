@@ -1,40 +1,40 @@
 {% extends "base.html" %}
 
-{% block title %}Djmanga Reader - Manga{% endblock %}
+{% block title %}Djmanga Reader - Book{% endblock %}
 
 {% block content %}
-  <div class='manga'>
+  <div class='book'>
     <h1>Djmanga Reader</h1>
-    {% if manga_list %}
-      <ul class='manga__list'>
-      {% for manga in manga_list %}
+    {% if book_list %}
+      <ul class='book__list'>
+      {% for book in book_list %}
         <li>
           <div>
-            <a href="{% url 'manga:manga-view' manga.url_key %}{% if manga.is_single_chapter %}1{% endif %}">
-                <img src="{{ BASE_URL }}/{{ manga.cover_path }}" alt="{{ manga.name }}" />
-                <span>{{ manga.name }}</span>
+            <a href="{% url 'book:book-view' book.url_key %}{% if book.is_single_chapter %}1{% endif %}">
+                <img src="{{ BASE_URL }}/{{ book.cover_path }}" alt="{{ book.name }}" />
+                <span>{{ book.name }}</span>
             </a>
           </div>
-          {% if manga.author.all %}
+          {% if book.author.all %}
           <div>
             Author: 
-            {% for author in manga.author.all %}
+            {% for author in book.author.all %}
               <a href="{% url 'person:person-view' author.slug %}">{{ author }}</a>{% if not forloop.last %},&nbsp;{% endif %}
             {% endfor %}
           </div>
           {% endif %}
-          {% if manga.illustrator.all %}
+          {% if book.illustrator.all %}
           <div>
             Illustrator: 
-            {% for illustrator in manga.illustrator.all %}
+            {% for illustrator in book.illustrator.all %}
               <a href="{% url 'person:person-view' illustrator.slug %}">{{ illustrator }}</a>{% if not forloop.last %},&nbsp;{% endif %}
             {% endfor %}
           </div>
           {% endif %}
-          {% if manga.tags.all %}
-          <div class="manga__tag-list">
+          {% if book.tags.all %}
+          <div class="book__tag-list">
             Tags:&nbsp;
-            {% for tag in manga.tags.all %}
+            {% for tag in book.tags.all %}
               <a href="{% url 'tags:tag-view' tag.name %}">{{ tag }}</a>{% if not forloop.last %},&nbsp;{% endif %}
             {% endfor %}
           </div>
@@ -43,7 +43,7 @@
       {% endfor %}
       </ul>
     {% else %}
-      <p>No Manga is available</p>
+      <p>No Book is available</p>
     {% endif %}
   </div>
 {% endblock %}

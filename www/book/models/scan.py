@@ -15,7 +15,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.timezone import now
 
-from .manga import Manga
+from .book import Book
 from .chapter import Chapter
 from .page import Page
 from tags.models import Tag
@@ -23,29 +23,29 @@ from person.models import Person
 
 class Scan(models.Model):
     def __init__(self):
-        self.manga_dir_url = os.path.abspath(__file__ + "/../../../media/manga")
-        self.manga_media_url = 'media/manga'
+        self.book_dir_url = os.path.abspath(__file__ + "/../../../media/manga")
+        self.book_media_url = 'media/manga'
 
-    def get_scan_manga_list(self):
+    def get_scan_book_list(self):
         """
-        Returns a list of directories in the media/manga folder.
-        It is assumed that each directory contains a unique manga.
+        Returns a list of directories in the media/book folder.
+        It is assumed that each directory contains a unique book.
         """
-        scan_manga_list = []
-        manga_dirs = os.scandir(self.manga_dir_url)
-        for manga_dir in manga_dirs:
-            scan_manga_list.append(manga_dir.name)
-        return scan_manga_list
+        scan_book_list = []
+        book_dirs = os.scandir(self.book_dir_url)
+        for book_dir in book_dirs:
+            scan_book_list.append(book_dir.name)
+        return scan_book_list
 
-    def get_scan_chapter_list(self, Manga):
+    def get_scan_chapter_list(self, Book):
         """
-        Returns a list of subdirectories in the manga's base folder.
+        Returns a list of subdirectories in the book's base folder.
         It is assumed that each subdirectory is a chapter.
         If there are no subdirectory, return False
         """
         scan_chapter_list = []
-        manga_dir_files = os.scandir(Manga.dir_abs_path)
-        for entry in manga_dir_files:
+        book_dir_files = os.scandir(Book.dir_abs_path)
+        for entry in book_dir_files:
             if entry.is_dir():
                 scan_chapter_list.append(entry.name)
         if len(scan_chapter_list) > 0:
@@ -91,24 +91,24 @@ class Scan(models.Model):
                     )
                 page_count += 1
 
-    def scan_manga(self):
+    def scan_book(self):
         """
-        Scan manga directory and modify database accordingly.
+        Scan book directory and modify database accordingly.
         """
-        scan_manga_list = self.get_scan_manga_list()
+        scan_book_list = self.get_scan_book_list()
 
-        # Create new Manga entry for each directory that does not have an entry.
-        for manga in scan_manga_list:
-            manga_filter = Manga.objects.filter(dir_name = manga)
-            find_manga = manga_filter.exists()
-            if find_manga:
+        # Create new Book entry for each directory that does not have an entry.
+        for book in scan_book_list:
+            book_filter = Book.objects.filter(dir_name = book)
+            find_book = book_filter.exists()
+            if find_book:
                 # An existing entry is found, scan for new chapters
-                existing_manga = manga_filter.get()
-                scan_chapter_list = self.get_scan_chapter_list(existing_manga)
+                existing_book = book_filter.get()
+                scan_chapter_list = self.get_scan_chapter_list(existing_book)
                 if scan_chapter_list == False:
                     # No chapter subdir, update pages
                     chapter = Chapter.objects.filter(
-                        manga = existing_manga
+                        book = existing_book
                     ).get()
                     self.update_chapter_pages(chapter)
                 else:
@@ -117,7 +117,7 @@ class Scan(models.Model):
                     chapter_count = 1
                     for chapter in scan_chapter_list:
                         chapter_filter = Chapter.objects.filter(
-                            manga = existing_manga,
+                            book = existing_book,
                             dir_name = chapter
                         )
                         find_chapter = chapter_filter.exists()
@@ -127,45 +127,45 @@ class Scan(models.Model):
                         else:
                             # No entry is found, create one
                             new_chapter = Chapter.objects.create(
-                                manga = existing_manga,
+                                book = existing_book,
                                 chapter = chapter_count,
                                 dir_name = chapter,
-                                dir_abs_path = existing_manga.dir_abs_path + '/' + chapter,
-                                dir_media_path = existing_manga.dir_media_path + '/' + chapter
+                                dir_abs_path = existing_book.dir_abs_path + '/' + chapter,
+                                dir_media_path = existing_book.dir_media_path + '/' + chapter
                             )
                             # Check folder for info.json to update values for chapter
                             info_abs_path = new_chapter.dir_media_path + '/info.json'
                             self.update_model_from_info(new_chapter, info_abs_path)
                             self.update_chapter_pages(new_chapter)                     
                         chapter_count += 1
-                    existing_manga.chapters = chapter_count - 1
-                    existing_manga.save()
-                info_abs_path = self.manga_dir_url + '/' + manga + '/info.json'
-                self.update_model_from_info(existing_manga, info_abs_path)
-                self.update_manga_cover_path(existing_manga)
+                    existing_book.chapters = chapter_count - 1
+                    existing_book.save()
+                info_abs_path = self.book_dir_url + '/' + book + '/info.json'
+                self.update_model_from_info(existing_book, info_abs_path)
+                self.update_book_cover_path(existing_book)
             else:
                 # No entry is found, create one.
                 # url_key regex replaces all but alphanumeric with a space
-                new_manga = Manga.objects.create(
-                    name = manga,
-                    url_key = re.sub(r'\W+', ' ', manga).strip().replace(' ', '-').lower(),
-                    dir_name = manga,
-                    dir_abs_path = self.manga_dir_url + '/' + manga,
-                    dir_media_path = self.manga_media_url + '/' + manga
+                new_book = Book.objects.create(
+                    name = book,
+                    url_key = re.sub(r'\W+', ' ', book).strip().replace(' ', '-').lower(),
+                    dir_name = book,
+                    dir_abs_path = self.book_dir_url + '/' + book,
+                    dir_media_path = self.book_media_url + '/' + book
                 )
-                # Check folder for info.json to update values for manga
-                info_abs_path = self.manga_dir_url + '/' + manga + '/info.json'
-                self.update_model_from_info(new_manga, info_abs_path)
-                scan_chapter_list = self.get_scan_chapter_list(new_manga)
+                # Check folder for info.json to update values for book
+                info_abs_path = self.book_dir_url + '/' + book + '/info.json'
+                self.update_model_from_info(new_book, info_abs_path)
+                scan_chapter_list = self.get_scan_chapter_list(new_book)
                 if scan_chapter_list == False:
                     # No Chapter subdir found, create one chapter and set
-                    # directory location to match manga
+                    # directory location to match book
                     new_chapter = Chapter.objects.create(
-                        manga = new_manga,
+                        book = new_book,
                         chapter = 1,
-                        dir_name = new_manga.dir_name,
-                        dir_abs_path = new_manga.dir_abs_path,
-                        dir_media_path = new_manga.dir_media_path
+                        dir_name = new_book.dir_name,
+                        dir_abs_path = new_book.dir_abs_path,
+                        dir_media_path = new_book.dir_media_path
                     )
                     # Check folder for info.json to update values for chapter
                     info_abs_path = new_chapter.dir_media_path + '/info.json'
@@ -176,20 +176,20 @@ class Scan(models.Model):
                     chapter_count = 1
                     for chapter in scan_chapter_list:
                         new_chapter = Chapter.objects.create(
-                            manga = new_manga,
+                            book = new_book,
                             chapter = chapter_count,
                             dir_name = chapter,
-                            dir_abs_path = new_manga.dir_abs_path + '/' + chapter,
-                            dir_media_path = new_manga.dir_media_path + '/' + chapter
+                            dir_abs_path = new_book.dir_abs_path + '/' + chapter,
+                            dir_media_path = new_book.dir_media_path + '/' + chapter
                         )
                         # Check folder for info.json to update values for chapter
                         info_abs_path = new_chapter.dir_media_path + '/info.json'
                         self.update_model_from_info(new_chapter, info_abs_path)
                         self.update_chapter_pages(new_chapter)
                         chapter_count += 1
-                # Update Cover For New Manga
-                self.update_manga_cover_path(new_manga)
-        return scan_manga_list
+                # Update Cover For New Book
+                self.update_book_cover_path(new_book)
+        return scan_book_list
 
     def update_model_from_info(self, model, info_abs_path):
         """
@@ -200,53 +200,53 @@ class Scan(models.Model):
             info_json = json.load(info_file)
             for attribute in info_json:
                 if attribute == "tags":
-                    self.update_manga_tags(model, info_json[attribute])
+                    self.update_book_tags(model, info_json[attribute])
                 elif (attribute == "author" or attribute == "illustrator"):
-                    self.update_manga_person(model, info_json[attribute], attribute)
+                    self.update_book_person(model, info_json[attribute], attribute)
                 else:
                     setattr(model, attribute, info_json[attribute])
             model.save()
         return
 
-    def update_manga_cover_path(self, manga):
+    def update_book_cover_path(self, book):
         """
-        Update the cover path for the input manga.
+        Update the cover path for the input book.
         """
         cover_chapter = Chapter.objects.filter(
-            manga = manga,
-            chapter = manga.cover_chapter
+            book = book,
+            chapter = book.cover_chapter
         )
         if cover_chapter.exists():
             cover_page = Page.objects.filter(
                 chapter = cover_chapter.get(),
-                page = manga.cover_page
+                page = book.cover_page
             )
             if cover_page.exists():
-                manga.cover_path = cover_page.get().file_media_path
-                manga.save()
+                book.cover_path = cover_page.get().file_media_path
+                book.save()
         return
 
-    def update_manga_tags(self, manga, tags):
+    def update_book_tags(self, book, tags):
         """
-        Update the tags for the manga
+        Update the tags for the book
         """
         tags = tags.split(',')
         for tag in tags:
             tag = re.sub(r'\W+', ' ', tag).strip().replace(' ', '-').lower()
             find_tag = Tag.objects.filter(name=tag)
             if find_tag.exists():
-                manga.tags.add(find_tag.get())
+                book.tags.add(find_tag.get())
             else:
                 new_tag = Tag.objects.create(
                     name = tag
                 )
-                manga.tags.add(new_tag)
-        manga.save()
+                book.tags.add(new_tag)
+        book.save()
         return
 
-    def update_manga_person(self, manga, people, role):
+    def update_book_person(self, book, people, role):
         """
-        Update a person's role with a manga
+        Update a person's role with a book
         """
         people = people.split(',')
         for person in people:
@@ -254,18 +254,18 @@ class Scan(models.Model):
             find_person = Person.objects.filter(name=person)
             if find_person.exists():
                 if role == "author":
-                    manga.author.add(find_person.get())
+                    book.author.add(find_person.get())
                 elif role == "illustrator":
-                    manga.illustrator.add(find_person.get())
+                    book.illustrator.add(find_person.get())
             else:
                 new_person = Person.objects.create(
                     name = person,
                     slug = re.sub(r'\W+', ' ', person).strip().replace(' ', '-').lower()
                 )
                 if role == "author":
-                    manga.author.add(new_person)
+                    book.author.add(new_person)
                 elif role == "illustrator":
-                    manga.illustrator.add(new_person)
-        manga.save()
+                    book.illustrator.add(new_person)
+        book.save()
 
 

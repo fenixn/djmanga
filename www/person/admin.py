@@ -1,13 +1,13 @@
 from django.contrib import admin
 
 from .models import Person
-from manga.models import Manga
+from book.models import Book
 
 class AuthorInline(admin.TabularInline):
-    model = Manga.author.through
+    model = Book.author.through
 
 class IllustratorInline(admin.TabularInline):
-    model = Manga.illustrator.through
+    model = Book.illustrator.through
 
 class PeopleAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')

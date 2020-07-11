@@ -5,13 +5,13 @@
 {% block content %}
   <div class='tags'>
     <h1>Tag{% if tag %} - {{ tag }}{% endif %}</h1>
-    {% if tag.get_manga %}
-      <ul class='tags__manga-list'>
-      {% for manga in tag.get_manga %}
+    {% if tag.get_book %}
+      <ul class='tags__book-list'>
+      {% for book in tag.get_book %}
         <li>
-            <a href="{% url 'manga:manga-view' manga.url_key %}">
+            <a href="{% url 'book:book-view' book.url_key %}">
             <span>
-                {{ manga.name }}
+                {{ book.name }}
             </span>
           </a>
         </li>

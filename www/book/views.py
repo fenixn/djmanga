@@ -7,53 +7,53 @@ from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import TemplateView
 
-from .models import Manga
+from .models import Book
 from .models import Chapter
 from .models import Scan
 
 class IndexView(ListView):
-    template_name = 'manga/index.html'
-    context_object_name = 'manga_list'
+    template_name = 'book/index.html'
+    context_object_name = 'book_list'
     def get_queryset(self):
         """
-        Return manga list
+        Return book list
         """
-        return Manga.objects.order_by('-update_date')
+        return Book.objects.order_by('-update_date')
 
-def manga_view(request, url_key):
-    template_name = 'manga/manga-view.html'
-    manga = Manga.get_by_slug(url_key)
-    if manga == False:
+def book_view(request, url_key):
+    template_name = 'book/book-view.html'
+    book = Book.get_by_slug(url_key)
+    if book == False:
         return render(request, template_name, {
-            'error_message': 'The Manga cannot be found.'
+            'error_message': 'The Book cannot be found.'
         })
     else:
         return render(request, template_name, {
-            'manga': manga
+            'book': book
         })
     
 def chapter_view(request, url_key, chapter):
-    template_name = 'manga/chapter-view.html'
-    manga = Chapter.get_manga_by_slug(url_key)
-    if manga == False:
+    template_name = 'book/chapter-view.html'
+    book = Chapter.get_book_by_slug(url_key)
+    if book == False:
         return render(request, template_name, {
-            'error_message': 'The Manga cannot be found.'
+            'error_message': 'The Book cannot be found.'
         })
     else:
         current_chapter = Chapter.objects.filter(
-            manga = manga,
+            book = book,
             chapter = chapter
         ).get()
         return render(request, template_name, {
-            'manga': manga,
+            'book': book,
             'chapter': current_chapter
         })
 
 class ScanView(TemplateView):
-    template_name = "manga/scan.html"
+    template_name = "book/scan.html"
     model = Scan()
 
     def get_context_data(self, **kwargs):
         context = super(ScanView, self).get_context_data(**kwargs)
-        context.update({'manga_list': self.model.scan_manga()})
+        context.update({'book_list': self.model.scan_book()})
         return context

@@ -39,8 +39,8 @@ class Tag(models.Model):
         else:
             return False
 
-    def get_manga(self):
+    def get_book(self):
         """
-        Returns all related Manga
+        Returns all related Book
         """
-        return self.manga_set.all().order_by('name')
+        return self.book_set.all().order_by('name')
