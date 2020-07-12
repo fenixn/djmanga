@@ -19,6 +19,9 @@ class Person(models.Model):
     name = models.CharField(max_length=100) # The person's name
     slug = models.CharField(max_length=100) # The slug used to access a person's page
 
+    class Meta:
+        verbose_name_plural = "People"
+
     def __str__(self):
             return self.name
 

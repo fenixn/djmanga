@@ -125,6 +125,8 @@ class Scan(models.Model):
                             find_chapter = chapter_filter.exists()
                             if find_chapter:
                                 # Existing chapter, update pages
+                                info_abs_path = chapter_filter.get().dir_media_path + '/info.json'
+                                self.update_model_from_info(chapter_filter.get(), info_abs_path)
                                 self.update_chapter_pages(chapter_filter.get())
                             else:
                                 # No entry is found, create one
@@ -146,6 +148,7 @@ class Scan(models.Model):
                     self.update_model_from_info(existing_book, info_abs_path)
                     self.update_book_cover_path(existing_book)
                     existing_book.dir_update_timestamp = current_dir_update_timestamp
+                    existing_book.save()
             else:
                 # No entry is found, create one.
                 # url_key regex replaces all but alphanumeric with a space
@@ -234,19 +237,45 @@ class Scan(models.Model):
         """
         Update the tags for the book
         """
-        tags = tags.split(',')
         for tag in tags:
-            tag = re.sub(r'\W+', ' ', tag).strip().replace(' ', '-').lower()
-            find_tag = Tag.objects.filter(name=tag)
-            if find_tag.exists():
-                book.tags.add(find_tag.get())
-            else:
-                new_tag = Tag.objects.create(
-                    name = tag
-                )
-                book.tags.add(new_tag)
-        book.save()
+            if "children" in tag: # For tags that is a parent
+                self.add_tag_with_children(book, tag)
+            else: # For independent tags
+                tag = self.convert_string_to_slug(tag["name"])
+                find_tag = Tag.objects.filter(name=tag)
+                if find_tag.exists():
+                    tag = find_tag.get()
+                else:
+                    tag = Tag.objects.create(name=tag)
+                book.tags.add(tag)
+                book.save()
         return
+    
+    def add_tag_with_children(self, model, tag_with_children):
+        """ 
+        Assigns a tag and its children tags to a model. Can execute recursively.
+            model: model to assign tags to.
+            tag_with_children: (dict) tag to assign to the model.
+        """
+        parent_tag = self.convert_string_to_slug(tag_with_children["name"])
+        find_parent_tag = Tag.objects.filter(name=parent_tag)
+        if find_parent_tag.exists():
+            parent_tag = find_parent_tag.get()
+        else:
+            parent_tag = Tag.objects.create(name=parent_tag)
+        model.tags.add(parent_tag)
+        for child_tag in tag_with_children["children"]:
+            if "children" not in child_tag:
+                child_tag = self.convert_string_to_slug(child_tag["name"])
+                find_child_tag = Tag.objects.filter(name=child_tag)
+                if find_child_tag.exists():
+                    child_tag = find_child_tag.get()
+                else:
+                    child_tag = Tag.objects.create(name=child_tag, parent=parent_tag)
+                model.tags.add(child_tag)
+                model.save()
+            else:
+                self.add_tag_with_children(model, child_tag)
 
     def update_book_person(self, book, people, role):
         """
@@ -272,4 +301,5 @@ class Scan(models.Model):
                     book.illustrator.add(new_person)
         book.save()
 
-
+    def convert_string_to_slug(self, string):
+        return re.sub(r'\W+', ' ', string).strip().replace(' ', '-').lower()
