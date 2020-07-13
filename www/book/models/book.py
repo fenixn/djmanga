@@ -66,40 +66,8 @@ class Book(models.Model): # A book series
             return False
 
     def get_tag_tree(self):
-        tag_tree = {} # The final tree to return
-        tag_branches = {} # Holds tags that still needs organization
+        """
+        Return the model's tags in a tree structure
+        """
         tags = self.tags.all()
-        for tag in tags:
-            # Tags without a parent can go straight into the final tree
-            if tag.parent is None: 
-                tag_tree.update({tag: {}})
-            else:
-                tag_branches.update({tag: {}})
-        # Calculate recursion level of each tag and sort from highest to lowest.
-        # By attaching tag nodes in this order, we ensure all nodes gets linked.
-        recursion_levels = {}
-        for tag in tag_branches:
-            tag_level = 1
-            current_tag = tag
-            while current_tag.parent in tag_branches:
-                tag_level += 1
-                current_tag = current_tag.parent
-            recursion_levels[tag] = tag_level
-        # Sort by recursion level
-        recursion_levels = sorted(recursion_levels.items(), key=lambda x: x[1], reverse=True)
-        sorted_unconnected_branches = {}
-        for tag,level in recursion_levels:
-            sorted_unconnected_branches.update({tag: {}})
-        # Connect tag nodes in order to ensure they all get linked
-        unconnected_branches = sorted_unconnected_branches.copy()
-        for tag in unconnected_branches:
-            if tag.parent in tag_branches:
-                branch_tag = tag_branches[tag]
-                tag_branches[tag.parent].update({tag:branch_tag})
-                sorted_unconnected_branches.pop(tag)
-        unconnected_branches = sorted_unconnected_branches.copy()
-        for tag in unconnected_branches:
-            branch_tag = tag_branches[tag]
-            tag_tree[tag.parent].update({tag:branch_tag})
-            sorted_unconnected_branches.pop(tag)
-        return tag_tree
+        return Tag.get_tag_tree(Tag,tags)

@@ -8,16 +8,7 @@
   <div class='book'>
     <h1>{{ book.name }}</h1>
     {% include "book/people-block.html" %}
-    <div class="book__tag-list">
-      {% if book.tags.all %}
-      <div class="book__tag-list">
-        Tags:&nbsp;
-        {% for tag in book.tags.all %}
-          <a href="{% url 'tags:tag-view' tag.name %}">{{ tag }}</a>{% if not forloop.last %},&nbsp;{% endif %}
-        {% endfor %}
-      </div>
-      {% endif %}
-    </div>
+    {% include "book/book-tag-tree.html" %}
     <h2>Chapters</h2>
     <ul class='book__list'>
       {% for chapter in book.get_chapters %}
