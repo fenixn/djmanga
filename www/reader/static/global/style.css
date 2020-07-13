@@ -124,3 +124,13 @@ main {
     height: 100%;
     max-width: 100%;
 }
+
+.tag__tree {
+    width: 100%;
+}
+.tag__tree ul {
+    padding-left: 0.5em;
+}
+.tag__tree li {
+    width: unset;
+}
