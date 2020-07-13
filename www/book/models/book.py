@@ -69,7 +69,6 @@ class Book(models.Model): # A book series
         tag_tree = {}
         tag_branches = {}
         tags = self.tags.all()
-        logger = logging.getLogger('djmanga')
         # build branches
         for tag in tags:
             if tag.parent is None:
@@ -88,9 +87,4 @@ class Book(models.Model): # A book series
             branch_tag = tag_branches[tag]
             tag_tree[tag.parent].update({tag:branch_tag})
             tag_branches.pop(tag)
-
-        logger.info('tag_tree')
-        logger.info(tag_tree)
-        logger.info('tag_branches')
-        logger.info(tag_branches)
         return tag_tree
