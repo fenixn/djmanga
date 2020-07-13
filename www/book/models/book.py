@@ -64,3 +64,33 @@ class Book(models.Model): # A book series
             return True
         else:
             return False
+
+    def get_tag_tree(self):
+        tag_tree = {}
+        tag_branches = {}
+        tags = self.tags.all()
+        logger = logging.getLogger('djmanga')
+        # build branches
+        for tag in tags:
+            if tag.parent is None:
+                tag_tree.update({tag: {}})
+            else:
+                tag_branches.update({tag: {}})
+        # connect branches
+        unconnected_branches = tag_branches.copy()
+        for tag in unconnected_branches:
+            if tag.parent and tag.parent in tag_branches:
+                branch_tag = tag_branches[tag]
+                tag_branches[tag.parent].update({tag:branch_tag})
+                tag_branches.pop(tag)
+        unconnected_branches = tag_branches.copy()
+        for tag in unconnected_branches:
+            branch_tag = tag_branches[tag]
+            tag_tree[tag.parent].update({tag:branch_tag})
+            tag_branches.pop(tag)
+
+        logger.info('tag_tree')
+        logger.info(tag_tree)
+        logger.info('tag_branches')
+        logger.info(tag_branches)
+        return tag_tree

@@ -31,12 +31,14 @@
             {% endfor %}
           </div>
           {% endif %}
-          {% if book.tags.all %}
+          {% if book.get_tag_tree %}
           <div class="book__tag-list">
-            Tags:&nbsp;
-            {% for tag in book.tags.all %}
-              <a href="{% url 'tags:tag-view' tag.name %}">{{ tag }}</a>{% if not forloop.last %},&nbsp;{% endif %}
-            {% endfor %}
+            Tags:
+            <ul class="tag__tree">
+              {% with tags=book.get_tag_tree template="tags/tag-tree.html" %}
+                {% include template %}
+              {% endwith %}
+            </ul>
           </div>
           {% endif %}
         </li>
