@@ -25,6 +25,7 @@ class Scan(models.Model):
     def __init__(self):
         self.book_dir_url = os.path.abspath(__file__ + "/../../../media/manga")
         self.book_media_url = 'media/manga'
+        self.logger = logging.getLogger('djmanga')
 
     def get_scan_book_list(self):
         """
@@ -105,7 +106,8 @@ class Scan(models.Model):
                 existing_book = book_filter.get()
                 current_dir_update_timestamp = int(os.stat(existing_book.dir_abs_path).st_mtime)
                 # Only run a new scan if the book directory has seen changes
-                if (existing_book.dir_update_timestamp != current_dir_update_timestamp):
+                #if (existing_book.dir_update_timestamp != current_dir_update_timestamp):
+                if True:
                     scan_chapter_list = self.get_scan_chapter_list(existing_book)
                     if scan_chapter_list == False:
                         # No chapter subdir, update pages
@@ -154,7 +156,7 @@ class Scan(models.Model):
                 # url_key regex replaces all but alphanumeric with a space
                 new_book = Book.objects.create(
                     name = book,
-                    url_key = re.sub(r'\W+', ' ', book).strip().replace(' ', '-').lower(),
+                    url_key = self.convert_string_to_slug(book),
                     dir_name = book,
                     dir_abs_path = self.book_dir_url + '/' + book,
                     dir_media_path = self.book_media_url + '/' + book
@@ -207,9 +209,13 @@ class Scan(models.Model):
             info_json = json.load(info_file)
             for attribute in info_json:
                 if attribute == "tags":
-                    self.update_book_tags(model, info_json[attribute])
+                    # Only the Book model currently has a Tag relationship
+                    if type(model) is Book:
+                        self.update_book_tags(model, info_json[attribute])
                 elif (attribute == "author" or attribute == "illustrator"):
-                    self.update_book_person(model, info_json[attribute], attribute)
+                    # Only the Book model currently has an author/illustrator attribute
+                    if type(model) is Book:
+                        self.update_book_person(model, info_json[attribute], attribute)
                 else:
                     setattr(model, attribute, info_json[attribute])
             model.save()
@@ -293,7 +299,7 @@ class Scan(models.Model):
             else:
                 new_person = Person.objects.create(
                     name = person,
-                    slug = re.sub(r'\W+', ' ', person).strip().replace(' ', '-').lower()
+                    slug = self.convert_string_to_slug(person)
                 )
                 if role == "author":
                     book.author.add(new_person)
