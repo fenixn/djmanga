@@ -257,24 +257,24 @@ class Scan(models.Model):
             model: model to assign tags to.
             tag_with_children: (dict) tag to assign to the model.
         """
-        parent_tag = self.convert_string_to_slug(tag_with_children["name"])
-        find_parent_tag = Tag.objects.filter(name=parent_tag)
-        if find_parent_tag.exists():
-            parent_tag = find_parent_tag.get()
+        current_tag = self.convert_string_to_slug(tag_with_children["name"])
+        find_current_tag = Tag.objects.filter(name=current_tag)
+        if find_current_tag.exists():
+            current_tag = find_current_tag.get()
         else:
-            parent_tag = Tag.objects.create(name=parent_tag)
-        model.tags.add(parent_tag)
+            current_tag = Tag.objects.create(name=current_tag)
+        model.tags.add(current_tag)
+        model.save()
         for child_tag in tag_with_children["children"]:
-            if "children" not in child_tag:
-                child_tag = self.convert_string_to_slug(child_tag["name"])
-                find_child_tag = Tag.objects.filter(name=child_tag)
-                if find_child_tag.exists():
-                    child_tag = find_child_tag.get()
-                else:
-                    child_tag = Tag.objects.create(name=child_tag, parent=parent_tag)
-                model.tags.add(child_tag)
-                model.save()
+            child_tag_name = self.convert_string_to_slug(child_tag["name"])
+            find_child_tag = Tag.objects.filter(name=child_tag_name)
+            if find_child_tag.exists():
+                child_tag_model = find_child_tag.get()
             else:
+                child_tag_model = Tag.objects.create(name=child_tag_name, parent=current_tag)
+            model.tags.add(child_tag_model)
+            model.save()
+            if "children" in child_tag:
                 self.add_tag_with_children(model, child_tag)
 
     def update_book_person(self, book, people, role):

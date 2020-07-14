@@ -4,6 +4,6 @@ from . import views
 
 app_name = 'tags'
 urlpatterns = [
-    path('', views.IndexView.as_view(), name='index'),
+    path('', views.index_view, name='index'),
     path('<slug:tag>/', views.tag_view, name='tag-view')
 ]

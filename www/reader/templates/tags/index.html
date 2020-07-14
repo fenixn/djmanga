@@ -5,21 +5,15 @@
 {% block content %}
   <div class='tags'>
     <h1>Tags</h1>
-    {% if tags_list %}
-      <ul class='tags__list'>
-      {% for tag in tags_list %}
-        <li>
-          <a href="{% url 'tags:tag-view' tag.name %}">
-            <span>
-                {% if tag.parent %}
-                    {{ tag.parent}} -
-                {% endif %} 
-                {{ tag.name }}
-            </span>
-          </a>
-        </li>
-      {% endfor %}
-      </ul>
+    {% if tag.get_all_tag_tree %}
+      <div class="book__tag-list">
+        Tags:
+        <ul class="tag__tree">
+            {% with tags=tag.get_all_tag_tree template="tags/tag-tree.html" %}
+            {% include template %}
+            {% endwith %}
+        </ul>
+      </div>
     {% else %}
       <p>There are not yet any tags</p>
     {% endif %}

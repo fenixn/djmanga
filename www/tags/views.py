@@ -9,14 +9,12 @@ from django.views.generic import TemplateView
 
 from .models import Tag
 
-class IndexView(ListView):
+def index_view(request):
     template_name = 'tags/index.html'
-    context_object_name = 'tags_list'
-    def get_queryset(self):
-        """
-        Return tags list
-        """
-        return Tag.objects.order_by('name')
+    tag = Tag
+    return render(request, template_name, {
+        'tag': tag
+    })
 
 def tag_view(request, tag):
     template_name = 'tags/tag-view.html'
