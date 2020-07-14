@@ -83,8 +83,9 @@ class Tag(models.Model):
         unconnected_branches = sorted_unconnected_branches.copy()
         for tag in unconnected_branches:
             branch_tag = tag_branches[tag]
-            tag_tree[tag.parent].update({tag:branch_tag})
-            sorted_unconnected_branches.pop(tag)
+            if tag.parent in tag_tree:
+                tag_tree[tag.parent].update({tag:branch_tag})
+                sorted_unconnected_branches.pop(tag)
         return tag_tree
 
     def get_all_tag_tree(self):
