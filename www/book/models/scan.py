@@ -209,12 +209,12 @@ class Scan(models.Model):
             info_json = json.load(info_file)
             for attribute in info_json:
                 if attribute == "tags":
-                    # Only the Book model currently has a Tag relationship
-                    if type(model) is Book:
+                    # Only the Book and Chapter model currently has a Tag relationship
+                    if type(model) is Book or type(model) is Chapter:
                         self.update_book_tags(model, info_json[attribute])
                 elif (attribute == "author" or attribute == "illustrator"):
-                    # Only the Book model currently has an author/illustrator attribute
-                    if type(model) is Book:
+                    # Only the Book and Chapter model currently has an author/illustrator attribute
+                    if type(model) is Book or type(model) is Chapter:
                         self.update_book_person(model, info_json[attribute], attribute)
                 else:
                     setattr(model, attribute, info_json[attribute])

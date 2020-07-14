@@ -8,6 +8,7 @@
   <div class='book'>
     <a href="{{ BASE_URL }}/book/{{book.url_key}}"><h1>{{ book.name }}</h1></a>
     {% include "book/people-block.html" %}
+    {% include "book/chapter-tag-tree.html" %}
     
     <h2>Chapter {{ chapter.chapter }}</h2>
 

@@ -5,6 +5,8 @@
 {% block content %}
   <div class='tags'>
     <h1>Tag{% if tag %} - {{ tag }}{% endif %}</h1>
+
+    <h2>Books</h2>
     {% if tag.get_book %}
       <ul class='tags__book-list'>
       {% for book in tag.get_book %}
@@ -18,7 +20,24 @@
       {% endfor %}
       </ul>
     {% else %}
-      <p>There are no Manga for this tag.</p>
+      <p>There are no Books for this tag.</p>
+    {% endif %}
+
+    <h2>Chapters</h2>
+    {% if tag.get_chapter %}
+      <ul class='tags__book-list'>
+      {% for chapter in tag.get_chapter %}
+        <li>
+            <a href="{% url 'book:chapter-view' chapter.book.url_key chapter.chapter %}">
+            <span>
+                {{chapter.book.name}} - {{ chapter.name }}
+            </span>
+          </a>
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>There are no Chapters for this tag.</p>
     {% endif %}
   </div>
 {% endblock %}

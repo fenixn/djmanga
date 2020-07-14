@@ -1,0 +1,10 @@
+{% if chapter.get_tag_tree %}
+    <div class="chapter__tag-list">
+    Tags:
+    <ul class="tag__tree">
+        {% with tags=chapter.get_tag_tree template="tags/tag-tree.html" %}
+        {% include template %}
+        {% endwith %}
+    </ul>
+    </div>
+{% endif %}

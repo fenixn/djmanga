@@ -13,11 +13,13 @@ from django.utils.timezone import now
 from django.urls import resolve
 
 from .book import Book
+from tags.models import Tag
 
 class Chapter(models.Model): # A single chapter of a book
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     name = models.CharField(max_length=1000)
     chapter = models.IntegerField(default=1)
+    tags = models.ManyToManyField(Tag) # Chapters can have many tags for filtering
     read_left = models.BooleanField(verbose_name='read right to left?', default=True)
     dir_name = models.CharField(max_length=1000)
     dir_abs_path = models.CharField(max_length=2200)
@@ -81,3 +83,10 @@ class Chapter(models.Model): # A single chapter of a book
             return '/book/' + self.book.url_key + '/' + str(self.chapter - 1)
         else:
             return False
+
+    def get_tag_tree(self):
+        """
+        Return the model's tags in a tree structure
+        """
+        tags = self.tags.all()
+        return Tag.get_tag_tree(Tag,tags)
