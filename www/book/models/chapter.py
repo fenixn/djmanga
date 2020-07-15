@@ -14,12 +14,15 @@ from django.urls import resolve
 
 from .book import Book
 from tags.models import Tag
+from person.models import Person
 
 class Chapter(models.Model): # A single chapter of a book
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     name = models.CharField(max_length=1000)
     chapter = models.IntegerField(default=1)
-    tags = models.ManyToManyField(Tag) # Chapters can have many tags for filtering
+    author = models.ManyToManyField(Person, related_name = 'chapterauthor')
+    illustrator = models.ManyToManyField(Person, related_name= 'chapterillustrator')
+    tags = models.ManyToManyField(Tag)
     read_left = models.BooleanField(verbose_name='read right to left?', default=True)
     dir_name = models.CharField(max_length=1000)
     dir_abs_path = models.CharField(max_length=2200)

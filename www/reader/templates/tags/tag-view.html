@@ -8,10 +8,11 @@
 
     <h2>Books</h2>
     {% if tag.get_book %}
-      <ul class='tags__book-list'>
+      <ul class='book__list tags__book-list'>
       {% for book in tag.get_book %}
         <li>
-            <a href="{% url 'book:book-view' book.url_key %}">
+          <a href="{% url 'book:book-view' book.url_key %}">
+            <img src="{{ BASE_URL }}/{{ book.cover_path }}" alt="{{ book.name }}" />
             <span>
                 {{ book.name }}
             </span>
@@ -25,12 +26,13 @@
 
     <h2>Chapters</h2>
     {% if tag.get_chapter %}
-      <ul class='tags__book-list'>
+      <ul class='book__list tags__book-list'>
       {% for chapter in tag.get_chapter %}
         <li>
-            <a href="{% url 'book:chapter-view' chapter.book.url_key chapter.chapter %}">
+          <a href="{% url 'book:chapter-view' chapter.book.url_key chapter.chapter %}">
+            <img src="{{ BASE_URL }}/{{ chapter.get_chapter_cover }}" alt="{{ chapter.name }}" />
             <span>
-                {{chapter.book.name}} - {{ chapter.name }}
+                {{chapter.book.name}} - {% if chapter.name %}{{ chapter.name }}{% else %}Chapter {{chapter.chapter}}{% endif %}
             </span>
           </a>
         </li>

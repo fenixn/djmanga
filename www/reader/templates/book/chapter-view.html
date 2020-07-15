@@ -10,7 +10,7 @@
     {% include "book/people-block.html" %}
     {% include "book/chapter-tag-tree.html" %}
     
-    <h2>Chapter {{ chapter.chapter }}</h2>
+    <h2>Chapter {{ chapter.chapter }}{% if chapter.name %} - {{chapter.name}}{% endif %}</h2>
 
     {% include "book/chapter-nav.html" %}
 
