@@ -45,6 +45,12 @@ class Tag(models.Model):
         """
         return self.book_set.all().order_by('name')
 
+    def get_chapter(self):
+        """
+        Returns all related Chapter
+        """
+        return self.chapter_set.all().order_by('name')
+
     def get_tag_tree(self, tags):
         """
         Returns the tag tree structure

@@ -8,10 +8,11 @@
     {% if person.get_authored_book or person.get_illustrated_book %}
     {% if person.get_authored_book %}
     <h2>Author of:</h2>
-    <ul class='people__book-list'>
+    <ul class='book__list people__book-list'>
       {% for book in person.get_authored_book %}
       <li>
-          <a href="{% url 'book:book-view' book.url_key %}">
+        <a href="{% url 'book:book-view' book.url_key %}">
+          <img src="{{ BASE_URL }}/{{ book.cover_path }}" alt="{{ book.name }}" />
           <span>
               {{ book.name }}
           </span>
@@ -22,10 +23,11 @@
     {% endif %}
     {% if person.get_illustrated_book %}
     <h2>Illustrator of:</h2>
-    <ul class='people__book-list'>
+    <ul class='book__list people__book-list'>
       {% for book in person.get_illustrated_book %}
       <li>
-          <a href="{% url 'book:book-view' book.url_key %}">
+        <a href="{% url 'book:book-view' book.url_key %}">
+          <img src="{{ BASE_URL }}/{{ book.cover_path }}" alt="{{ book.name }}" />
           <span>
               {{ book.name }}
           </span>

@@ -5,11 +5,14 @@
 {% block content %}
   <div class='tags'>
     <h1>Tag{% if tag %} - {{ tag }}{% endif %}</h1>
+
+    <h2>Books</h2>
     {% if tag.get_book %}
-      <ul class='tags__book-list'>
+      <ul class='book__list tags__book-list'>
       {% for book in tag.get_book %}
         <li>
-            <a href="{% url 'book:book-view' book.url_key %}">
+          <a href="{% url 'book:book-view' book.url_key %}">
+            <img src="{{ BASE_URL }}/{{ book.cover_path }}" alt="{{ book.name }}" />
             <span>
                 {{ book.name }}
             </span>
@@ -18,7 +21,25 @@
       {% endfor %}
       </ul>
     {% else %}
-      <p>There are no Manga for this tag.</p>
+      <p>There are no Books for this tag.</p>
+    {% endif %}
+
+    <h2>Chapters</h2>
+    {% if tag.get_chapter %}
+      <ul class='book__list tags__book-list'>
+      {% for chapter in tag.get_chapter %}
+        <li>
+          <a href="{% url 'book:chapter-view' chapter.book.url_key chapter.chapter %}">
+            <img src="{{ BASE_URL }}/{{ chapter.get_chapter_cover }}" alt="{{ chapter.name }}" />
+            <span>
+                {{chapter.book.name}} - {% if chapter.name %}{{ chapter.name }}{% else %}Chapter {{chapter.chapter}}{% endif %}
+            </span>
+          </a>
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>There are no Chapters for this tag.</p>
     {% endif %}
   </div>
 {% endblock %}
