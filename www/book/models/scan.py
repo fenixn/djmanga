@@ -198,6 +198,7 @@ class Scan(models.Model):
                         chapter_count += 1
                 # Update Cover For New Book
                 self.update_book_cover_path(new_book)
+                self.update_book_tag_with_children_tags(new_book)
                 new_book.dir_update_timestamp = os.stat(new_book.dir_abs_path).st_mtime
         return scan_book_list
 
