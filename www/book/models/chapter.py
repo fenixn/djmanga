@@ -2,7 +2,6 @@ import datetime
 import os
 import logging
 
-from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.staticfiles.utils import get_files
 from django.contrib.staticfiles.storage import StaticFilesStorage
 

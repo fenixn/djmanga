@@ -7,7 +7,6 @@ import json
 from natsort import natsorted
 from itertools import chain
 
-from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.staticfiles.utils import get_files
 from django.contrib.staticfiles.storage import StaticFilesStorage
 
