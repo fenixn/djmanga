@@ -2,9 +2,6 @@ import datetime
 import os
 import logging
 
-from django.contrib.staticfiles.utils import get_files
-from django.contrib.staticfiles.storage import StaticFilesStorage
-
 from django.db import models
 from django.apps import apps
 
@@ -32,6 +29,7 @@ class Book(models.Model): # A book series
     pub_date = models.DateTimeField(verbose_name='date published', blank=True, null=True)
     created_date = models.DateTimeField(verbose_name='entry creation date', default=now)
     update_date = models.DateTimeField(verbose_name='date last updated', auto_now=True)
+    force_scan = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

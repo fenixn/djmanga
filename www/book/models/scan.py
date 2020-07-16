@@ -8,8 +8,6 @@ import environ
 from natsort import natsorted
 from itertools import chain
 
-from django.contrib.staticfiles.utils import get_files
-from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.conf import settings
 
 from django.db import models
@@ -109,8 +107,7 @@ class Scan(models.Model):
                 existing_book = book_filter.get()
                 current_dir_update_timestamp = int(os.stat(existing_book.dir_abs_path).st_mtime)
                 # Only run a new scan if the book directory has seen changes
-                #if (existing_book.dir_update_timestamp != current_dir_update_timestamp):
-                if True:
+                if (existing_book.force_scan or existing_book.dir_update_timestamp != current_dir_update_timestamp):
                     scan_chapter_list = self.get_scan_chapter_list(existing_book)
                     if scan_chapter_list == False:
                         # No chapter subdir, update pages
