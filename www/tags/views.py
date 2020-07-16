@@ -7,13 +7,13 @@ from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import TemplateView
 
-from .models import Tag
+from .models import Tag, AllTags
 
 def index_view(request):
     template_name = 'tags/index.html'
-    tag = Tag
+    all_tags = AllTags
     return render(request, template_name, {
-        'tag': tag
+        'all_tags': all_tags
     })
 
 def tag_view(request, tag):

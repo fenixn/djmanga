@@ -3,6 +3,7 @@ __pycache__/
 
 # Ignore config files
 /www/djmanga/settings.py
+/www/djmanga/.env
 docker-compose.yml
 
 # Ignore media files, but not media file structure

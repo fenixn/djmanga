@@ -5,11 +5,11 @@
 {% block content %}
   <div class='tags'>
     <h1>Tags</h1>
-    {% if tag.get_all_tag_tree %}
+    {% if all_tags.get_tag_tree %}
       <div class="book__tag-list">
         Tags:
         <ul class="tag__tree">
-            {% with tags=tag.get_all_tag_tree template="tags/tag-tree.html" %}
+            {% with tags=all_tags.get_tag_tree template="tags/tag-tree.html" %}
             {% include template %}
             {% endwith %}
         </ul>
