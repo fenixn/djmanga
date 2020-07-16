@@ -3,12 +3,14 @@ import os
 import logging
 import re
 import json
+import environ
 
 from natsort import natsorted
 from itertools import chain
 
 from django.contrib.staticfiles.utils import get_files
 from django.contrib.staticfiles.storage import StaticFilesStorage
+from django.conf import settings
 
 from django.db import models
 
@@ -23,8 +25,9 @@ from person.models import Person
 
 class Scan(models.Model):
     def __init__(self):
-        self.book_dir_url = os.path.abspath(__file__ + "/../../../media/manga")
-        self.book_media_url = 'media/manga'
+        self.manga_dir = getattr(settings, "MANGA_DIR", None)
+        self.book_dir_url = os.path.abspath(__file__ + "/../../../" + self.manga_dir)
+        self.book_media_url = self.manga_dir
         self.logger = logging.getLogger('djmanga')
 
     def get_scan_book_list(self):
