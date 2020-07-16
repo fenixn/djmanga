@@ -5,6 +5,7 @@ import re
 import json
 
 from natsort import natsorted
+from itertools import chain
 
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.staticfiles.utils import get_files
@@ -149,6 +150,7 @@ class Scan(models.Model):
                     info_abs_path = self.book_dir_url + '/' + book + '/info.json'
                     self.update_model_from_info(existing_book, info_abs_path)
                     self.update_book_cover_path(existing_book)
+                    self.update_book_tag_with_children_tags(existing_book)
                     existing_book.dir_update_timestamp = current_dir_update_timestamp
                     existing_book.save()
             else:
@@ -282,6 +284,14 @@ class Scan(models.Model):
             model.save()
             if "children" in child_tag:
                 self.add_tag_with_children(model, child_tag)
+
+    def update_book_tag_with_children_tags(self, book):
+        tags = book.tags.all()
+        for chapter in book.chapter_set.all():
+            tags = list(chain(tags, chapter.tags.all()))
+        for tag in tags:
+            book.tags.add(Tag.objects.filter(name=tag).get())
+        book.save()
 
     def update_book_person(self, book, people, role):
         """
