@@ -8,6 +8,7 @@ This is a hobby project so that I can learn Python and Django. It is currently u
 2. Rename docker-compose.yml.sample to docker-compose.yml
     1. Set POSTGRES_DB, POSTGRES_USER, and POSTGRES_PASSWORD in docker-compose.yml
     2. OPTIONAL - set a volume to point your manga folder to /www/media/manga. This is where the app will scan for new manga.
+3. Rename .env.sample to .env in www/djmanga/
 3. Rename settings.py.sample to settings.py in www/djmanga/
     1. Set security key and database in settings.py
 4. Run docker-compose up
