@@ -1,6 +1,7 @@
 import datetime
 import os
 import logging
+import pickle
 
 from django.db import models
 from django.apps import apps
@@ -47,7 +48,7 @@ class Tag(models.Model):
         """
         return self.chapter_set.all().order_by('name')
 
-    def get_tag_tree(self, tags):
+    def create_tag_tree(self, tags):
         """
         Returns the tag tree structure
             tags: (models)  The input tags to organize into a tree structure
@@ -90,9 +91,36 @@ class Tag(models.Model):
                 sorted_unconnected_branches.pop(tag)
         return tag_tree
 
-    def get_all_tag_tree(self):
+class AllTags(models.Model):
+    tag_tree = models.BinaryField(blank=True)
+
+    def create_tag_tree(self):
         """
-        Returns the tree structure for all tags
+        Create the tree structure for all tags and saves it
         """
         tags = Tag.objects.all()
-        return self.get_tag_tree(tags)
+        tag_tree = Tag.create_tag_tree(Tag,tags)
+        tag_tree = pickle.dumps(tag_tree)
+
+        all_tags = AllTags.objects.all()
+        if all_tags:
+            all_tags = all_tags.get()
+        else:
+            all_tags = AllTags.objects.create()
+        all_tags.tag_tree = tag_tree
+        all_tags.save()
+        return
+
+    def get_tag_tree(self):
+        tag_tree = ''
+        all_tags = AllTags.objects.all()
+        if all_tags:
+            all_tags = all_tags.first()
+            try:
+                tag_tree = pickle.loads(all_tags.tag_tree)
+            except EOFError:
+                # This means the tag tree is not created yet.
+                # Do nothing so we can prevent an unnecessary error message.
+                pass
+        return tag_tree
+        

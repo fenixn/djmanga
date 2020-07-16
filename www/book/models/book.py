@@ -1,6 +1,7 @@
 import datetime
 import os
 import logging
+import pickle
 
 from django.db import models
 from django.apps import apps
@@ -18,6 +19,7 @@ class Book(models.Model): # A book series
     author = models.ManyToManyField(Person, related_name = 'author')
     illustrator = models.ManyToManyField(Person, related_name= 'illustrator')
     tags = models.ManyToManyField(Tag)
+    tag_tree = models.BinaryField(blank=True)
     chapters = models.IntegerField(default=1)
     dir_name = models.CharField(max_length=1000)
     dir_update_timestamp = models.IntegerField(verbose_name='directory update date', blank=True, null=True)
@@ -62,9 +64,24 @@ class Book(models.Model): # A book series
         else:
             return False
 
-    def get_tag_tree(self):
+    def create_tag_tree(self):
         """
         Return the model's tags in a tree structure
         """
         tags = self.tags.all()
-        return Tag.get_tag_tree(Tag,tags)
+        tag_tree = Tag.create_tag_tree(Tag,tags)
+        tag_tree = pickle.dumps(tag_tree)
+        self.tag_tree = tag_tree
+        self.save()
+        return
+
+    def get_tag_tree(self):
+        tag_tree = ''
+        try:
+            tag_tree = pickle.loads(self.tag_tree)
+        except EOFError:
+            # This means the tag tree is not created yet.
+            # Do nothing so we can prevent an unnecessary error message.
+            pass
+        finally: 
+            return tag_tree

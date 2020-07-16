@@ -1,7 +1,9 @@
 import datetime
 import os
 import logging
+import pickle
 
+from django.core import serializers
 from django.db import models
 
 from django.utils import timezone
@@ -19,6 +21,7 @@ class Chapter(models.Model): # A single chapter of a book
     author = models.ManyToManyField(Person, related_name = 'chapterauthor')
     illustrator = models.ManyToManyField(Person, related_name= 'chapterillustrator')
     tags = models.ManyToManyField(Tag)
+    tag_tree = models.BinaryField(blank=True)
     read_left = models.BooleanField(verbose_name='read right to left?', default=True)
     dir_name = models.CharField(max_length=1000)
     dir_abs_path = models.CharField(max_length=2200)
@@ -83,9 +86,24 @@ class Chapter(models.Model): # A single chapter of a book
         else:
             return False
 
-    def get_tag_tree(self):
+    def create_tag_tree(self):
         """
         Return the model's tags in a tree structure
         """
         tags = self.tags.all()
-        return Tag.get_tag_tree(Tag,tags)
+        tag_tree = Tag.create_tag_tree(Tag,tags)
+        tag_tree = pickle.dumps(tag_tree)
+        self.tag_tree = tag_tree
+        self.save()
+        return
+
+    def get_tag_tree(self):
+        tag_tree = ''
+        try:
+            tag_tree = pickle.loads(self.tag_tree)
+        except EOFError:
+            # This means the tag tree is not created yet.
+            # Do nothing so we can prevent an unnecessary error message.
+            pass
+        finally: 
+            return tag_tree

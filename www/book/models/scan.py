@@ -18,7 +18,7 @@ from django.utils.timezone import now
 from .book import Book
 from .chapter import Chapter
 from .page import Page
-from tags.models import Tag
+from tags.models import Tag, AllTags
 from person.models import Person
 
 class Scan(models.Model):
@@ -127,22 +127,21 @@ class Scan(models.Model):
                             find_chapter = chapter_filter.exists()
                             if find_chapter:
                                 # Existing chapter, update pages
-                                info_abs_path = chapter_filter.get().dir_media_path + '/info.json'
-                                self.update_model_from_info(chapter_filter.get(), info_abs_path)
-                                self.update_chapter_pages(chapter_filter.get())
+                                current_chapter = chapter_filter.get()
                             else:
                                 # No entry is found, create one
-                                new_chapter = Chapter.objects.create(
+                                current_chapter = Chapter.objects.create(
                                     book = existing_book,
                                     chapter = chapter_count,
                                     dir_name = chapter,
                                     dir_abs_path = existing_book.dir_abs_path + '/' + chapter,
                                     dir_media_path = existing_book.dir_media_path + '/' + chapter
                                 )
-                                # Check folder for info.json to update values for chapter
-                                info_abs_path = new_chapter.dir_media_path + '/info.json'
-                                self.update_model_from_info(new_chapter, info_abs_path)
-                                self.update_chapter_pages(new_chapter)                     
+                            # Check folder for info.json to update values for chapter
+                            info_abs_path = current_chapter.dir_media_path + '/info.json'
+                            self.update_model_from_info(current_chapter, info_abs_path)
+                            self.update_chapter_pages(current_chapter)
+                            current_chapter.create_tag_tree()
                             chapter_count += 1
                         existing_book.chapters = chapter_count - 1
                         existing_book.save()
@@ -150,6 +149,7 @@ class Scan(models.Model):
                     self.update_model_from_info(existing_book, info_abs_path)
                     self.update_book_cover_path(existing_book)
                     self.update_book_tag_with_children_tags(existing_book)
+                    existing_book.create_tag_tree()
                     existing_book.dir_update_timestamp = current_dir_update_timestamp
                     existing_book.save()
             else:
@@ -180,6 +180,7 @@ class Scan(models.Model):
                     info_abs_path = new_chapter.dir_media_path + '/info.json'
                     self.update_model_from_info(new_chapter, info_abs_path)
                     self.update_chapter_pages(new_chapter)
+                    new_chapter.create_tag_tree()
                 else:
                     # Chapter subdirs found, create a chapter for each
                     chapter_count = 1
@@ -195,11 +196,15 @@ class Scan(models.Model):
                         info_abs_path = new_chapter.dir_media_path + '/info.json'
                         self.update_model_from_info(new_chapter, info_abs_path)
                         self.update_chapter_pages(new_chapter)
+                        new_chapter.create_tag_tree()
                         chapter_count += 1
                 # Update Cover For New Book
                 self.update_book_cover_path(new_book)
                 self.update_book_tag_with_children_tags(new_book)
+                new_book.create_tag_tree()
                 new_book.dir_update_timestamp = os.stat(new_book.dir_abs_path).st_mtime
+        # Create the tag tree for all tags
+        AllTags.create_tag_tree(AllTags)
         return scan_book_list
 
     def update_model_from_info(self, model, info_abs_path):
