@@ -1,6 +1,6 @@
 {% for tag,children in tags.items %}
-<li>
-    <a href="{% url 'tags:tag-view' tag %}">{{ tag }}</a>{% if children %}:{% endif %}
+<li {% if children %}class="has-children"{% endif %}>
+    <a href="{% url 'tags:tag-view' tag %}">{{ tag }}{% if children %}:{% endif %}</a>
     {% if children %}
         <ul>
             {%with tags=children template="tags/tag-tree.html" %}
