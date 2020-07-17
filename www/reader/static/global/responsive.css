@@ -8,5 +8,6 @@
     .book__page-list img {
         padding: unset;
         max-width: 100%;
+        width: 100%;
     }
 }

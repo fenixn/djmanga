@@ -96,10 +96,6 @@ main {
     padding: 0.25em;
     text-align: center;
 }
-.book__list li > div {
-    display: flex;
-    flex-direction: column;
-}
 .book__list li span {
     text-align: center;
 }
@@ -125,7 +121,18 @@ main {
     max-width: 100%;
 }
 
+.book .tag__tree {
+    max-height: 6em;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #333333 #262626;
+    margin: 0;
+}
+
 .tag__tree {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
     width: 100%;
 }
 .tag__tree ul {
@@ -133,4 +140,16 @@ main {
 }
 .tag__tree li {
     width: unset;
+    padding: 0 0 0 0.5em;
+}
+.tag__tree .has-children {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
+}
+.tag__tree .has-children > ul {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
 }
