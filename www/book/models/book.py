@@ -9,13 +9,14 @@ from django.apps import apps
 from django.utils import timezone
 from django.utils.timezone import now
 
+from .collection import Collection
 from tags.models import Tag
 from person.models import Person
 
 class Book(models.Model): # A book series
     name = models.CharField(max_length=1000)
     url_key = models.CharField(max_length=1000)
-    book_type = models.CharField(max_length=50, default='manga')
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE, blank=True, null=True)
     author = models.ManyToManyField(Person, related_name = 'author')
     illustrator = models.ManyToManyField(Person, related_name= 'illustrator')
     tags = models.ManyToManyField(Tag)

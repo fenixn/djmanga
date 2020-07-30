@@ -117,6 +117,11 @@ class Scan(models.Model):
         Scan book directory and modify database accordingly.
         """
         self.scan_collection()
+        #for collection in Collection.objects.all():
+            # Adjust scan_book_list to accept a directory to scan.
+            # Get book list for each directory and scan.
+            # Adjust code below to set book to specific collection depending on
+            # which directory it is found in
 
         scan_book_list = self.get_scan_book_list()
 
