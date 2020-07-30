@@ -18,11 +18,13 @@ from django.utils.timezone import now
 from .book import Book
 from .chapter import Chapter
 from .page import Page
+from .collection import Collection
 from tags.models import Tag, AllTags
 from person.models import Person
 
 class Scan(models.Model):
     def __init__(self):
+        self.media_dir = os.path.abspath(__file__ + "/../../../" + 'media')
         self.manga_dir = getattr(settings, "MANGA_DIR", None)
         self.book_dir_url = os.path.abspath(__file__ + "/../../../" + self.manga_dir)
         self.book_media_url = self.manga_dir
@@ -93,10 +95,29 @@ class Scan(models.Model):
                     )
                 page_count += 1
 
+    def scan_collection(self):
+        """
+        Scan media directory and update collections
+        """
+        # Get a list of every media directory
+        collections = []
+        media_dirs = os.scandir(self.media_dir)
+        for media_dir in media_dirs:
+            collections.append(media_dir.name)
+        for collection in collections:
+            find_collection = Collection.objects.filter(name=collection)
+            if not find_collection.exists():
+                new_collection = Collection.objects.create(
+                    name = collection,
+                    url_key = collection
+                )
+
     def scan_book(self):
         """
         Scan book directory and modify database accordingly.
         """
+        self.scan_collection()
+
         scan_book_list = self.get_scan_book_list()
 
         # Create new Book entry for each directory that does not have an entry.
