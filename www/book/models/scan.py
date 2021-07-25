@@ -290,13 +290,19 @@ class Scan(models.Model):
                 book.save()
         return
     
-    def add_tag_with_children(self, model, tag_with_children):
+    def add_tag_with_children(self, model, tag_with_children, parent_tag=None):
         """ 
         Assigns a tag and its children tags to a model. Can execute recursively.
             model: model to assign tags to.
             tag_with_children: (dict) tag to assign to the model.
         """
-        current_tag = self.convert_string_to_slug(tag_with_children["name"])
+        if parent_tag is not None:
+            if isinstance(parent_tag, str):
+                current_tag = self.convert_string_to_slug(parent_tag + "-" + tag_with_children["name"])
+            else:
+                current_tag = self.convert_string_to_slug(str(parent_tag) + "-" + tag_with_children["name"])
+        else:
+            current_tag = self.convert_string_to_slug(tag_with_children["name"])
         find_current_tag = Tag.objects.filter(name=current_tag)
         if find_current_tag.exists():
             current_tag = find_current_tag.get()
@@ -305,7 +311,7 @@ class Scan(models.Model):
         model.tags.add(current_tag)
         model.save()
         for child_tag in tag_with_children["children"]:
-            child_tag_name = self.convert_string_to_slug(child_tag["name"])
+            child_tag_name = self.convert_string_to_slug(tag_with_children["name"] + "-" + child_tag["name"])
             find_child_tag = Tag.objects.filter(name=child_tag_name)
             if find_child_tag.exists():
                 child_tag_model = find_child_tag.get()
@@ -314,7 +320,7 @@ class Scan(models.Model):
             model.tags.add(child_tag_model)
             model.save()
             if "children" in child_tag:
-                self.add_tag_with_children(model, child_tag)
+                self.add_tag_with_children(model, child_tag, current_tag)
 
     def update_book_tag_with_children_tags(self, book):
         tags = book.tags.all()
